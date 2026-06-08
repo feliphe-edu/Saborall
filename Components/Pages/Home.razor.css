@@ -1,11 +1,13 @@
-﻿body {
-    background-image: src("/imagens/tela_fundo.png");
-    color: blue;
-    text-align: center;
+﻿.home {
+    min-height: 100vh;
+    background-image: url('/Imagens/tela_fundo.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
 }
 
 div {
     color: blue;
     text-align: center;
 }
-
