@@ -1,99 +1,67 @@
 ﻿<!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <title>Criação de Senha</title>
+<meta charset="UTF-8">
+<title>Senha</title>
 
-    <style>
-        body {
-            font-family: Arial;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+<style>
+body {
+    font-family: Arial;
+    text-align: center;
 
-            background-image: url("https://www.magnific.com/br/fotos-vetores-gratis/fundo-sorvete");
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-        }
+    background-image: url("https://www.magnific.com/br/fotos-vetores-gratis/fundo-sorvete");
+    background-size: cover;
+}
 
-        .container {
-            background: rgba(255, 255, 255, 0.9);
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.2);
-            width: 300px;
-        }
+.container {
+    margin-top: 150px;
+    background: white;
+    display: inline-block;
+    padding: 20px;
+}
 
-        input {
-            width: 100%;
-            padding: 10px;
-            margin: 8px 0;
-        }
+input {
+    display: block;
+    margin: 10px auto;
+    padding: 8px;
+}
 
-        button {
-            width: 100%;
-            padding: 10px;
-            background: #007bff;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
+button {
+    padding: 8px;
+}
 
-        button:hover {
-            background: #0056b3;
-        }
-
-        .msg {
-            margin-top: 10px;
-            font-weight: bold;
-            text-align: center;
-        }
-    </style>
+</style>
 </head>
 
 <body>
 
 <div class="container">
-    <h2>Criar Senha</h2>
+    <h3>Criar Senha</h3>
 
-    <input type="password" id="senha" placeholder="Digite a senha">
-    <input type="password" id="confirmarSenha" placeholder="Confirme a senha">
+    <input type="password" id="senha" placeholder="Senha">
+    <input type="password" id="confirmar" placeholder="Confirmar">
 
-    <button onclick="confirmar()">Confirmar senha</button>
+    <button onclick="verificar()">OK</button>
 
-    <div class="msg" id="mensagem"></div>
+    <p id="msg"></p>
 </div>
 
 <script>
-    function confirmar() {
-        let senha = document.getElementById("senha").value;
-        let confirmarSenha = document.getElementById("confirmarSenha").value;
-        let msg = document.getElementById("mensagem");
+function verificar() {
+    let s = document.getElementById("senha").value;
+    let c = document.getElementById("confirmar").value;
+    let msg = document.getElementById("msg");
 
-        if (senha === "" || confirmarSenha === "") {
-            msg.style.color = "red";
-            msg.innerHTML = "Preencha todos os campos!";
-        } 
-        else if (senha === confirmarSenha) {
-            msg.style.color = "green";
-            msg.innerHTML = "Senha criada com sucesso!";
-        } 
-        else {
-            msg.style.color = "red";
-<<<<<<< HEAD
-            msg.innerHTML = "As senhas não coincidem!";
-=======
-            msg.innerHTML = "As senhas não coincidem!!";
->>>>>>> eb5ce8ebec7a0f59baeb06494fe002ee26420cf5
-        }
+    if (s == c && s != "") {
+        msg.innerHTML = "Senha correta";
+    } else {
+        msg.innerHTML = "Erro na senha";
     }
+}
 </script>
 
 </body>
 </html>
-
 @code {
 
 }
