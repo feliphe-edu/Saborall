@@ -1,13 +1,38 @@
 ﻿.home {
+    width: 100vw;
     min-height: 100vh;
     background-image: url('/Imagens/tela_fundo.png');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
 }
+
+body {
+    margin: 0;
+    padding: 0;
+    background-image: url('/Imagens/tela_fundo.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    min-height: 100vh;
 }
 
 div {
     color: blue;
     text-align: center;
 }
+
+.btn-entrar {
+    display: inline-block;
+    padding: 12px 25px;
+    background-color: #ff69b4;
+    color: white;
+    text-decoration: none;
+    border-radius: 10px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+    .btn-entrar:hover {
+        cursor: pointer;
+    }
