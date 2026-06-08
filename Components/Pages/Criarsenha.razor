@@ -1,70 +1,41 @@
 ﻿@page "/Criarsenha"
 
-
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-<meta charset="UTF-8">
-<title>Senha</title>
-
-<style>
-body {
-    font-family: Arial;
-    text-align: center;
-
-    background-image: url("https://pt.pngtree.com/free-backgrounds-photos/a%C3%A7ai-sorvete");
-    background-size: cover;
-}
-
-.container {
-    margin-top: 150px;
-    background: white;
-    display: inline-block;
-    padding: 20px;
-}
-
-input {
-    display: block;
-    margin: 10px auto;
-    padding: 8px;
-}
-
-button {
-    padding: 8px;
-}
-
-</style>
-</head>
-
-<body>
-
 <div class="container">
+
     <h3>Criar Senha</h3>
 
-    <input type="password" id="senha" placeholder="Senha">
-    <input type="password" id="confirmar" placeholder="Confirmar">
+    <input type="password"
+           @bind="senha"
+           placeholder="Senha" />
 
-    <button onclick="verificar()">OK</button>
+    <input type="password"
+           @bind="confirmar"
+           placeholder="Confirmar" />
 
-    <p id="msg"></p>
+    <button @onclick="Verificar">
+        OK
+    </button>
+
+    <p>@mensagem</p>
+
 </div>
 
-<script>
-function verificar() {
-    let s = document.getElementById("senha").value;
-    let c = document.getElementById("confirmar").value;
-    let msg = document.getElementById("msg");
-
-    if (s == c && s != "") {
-        msg.innerHTML = "Senha correta";
-    } else {
-        msg.innerHTML = "Erro na senha";
-    }
-}
-</script>
-
-</body>
-</html>
 @code {
+
+    private string senha = "";
+    private string confirmar = "";
+    private string mensagem = "";
+
+    private void Verificar()
+    {
+        if (senha == confirmar && senha != "")
+        {
+            mensagem = "Senha correta";
+        }
+        else
+        {
+            mensagem = "Erro na senha";
+        }
+    }
 
 }

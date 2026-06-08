@@ -1,15 +1,53 @@
 ﻿@page "/"
+@inject NavigationManager Navigation
 
-<PageTitle>Pagina inicial</PageTitle>
+<div class="container-home">
 
+    <img src="/Imagens/logo.jpeg"
+         alt="Logo Saborall"
+         class="logo-saborall" />
 
-<div class="home">
-    <h1>Saborall</h1>
-    <h4>Criar uma conta</h4
-    <h6>insira seu e-mail para se cadastrar nesse aplicativo</h6>
+    <div class="card-login">
+
+        <h2>Criar uma conta</h2>
+
+        <p class="subtitulo">
+            Insira seu e-mail para se cadastrar neste aplicativo
+        </p>
+
+        <input type="email"
+               placeholder="email@dominio.com"
+               class="campo-email" />
+
+        <button class="btn-continuar"
+                @onclick="IrParaCriarSenha">
+            Continuar
+        </button>
+
+        <p class="ou">OU</p>
+
+        <button class="btn-google">
+            Continuar com o Google
+        </button>
+
+        <button class="btn-apple">
+            Continuar com a Apple
+        </button>
+
+        <p class="termos">
+            Ao clicar em continuar, você concorda com os nossos
+            Termos de Serviço e com a Política de Privacidade.
+        </p>
+
+    </div>
+
 </div>
 
+@code {
 
-<a href="/Criarsenha" class="btn-entrar">
-    Criar Conta
-</a>
+    private void IrParaCriarSenha()
+    {
+        Navigation.NavigateTo("/Criarsenha");
+    }
+
+}

@@ -1,0 +1,16 @@
+﻿.container {
+    margin-top: 150px;
+    background: white;
+    display: inline-block;
+    padding: 20px;
+}
+
+input {
+    display: block;
+    margin: 10px auto;
+    padding: 8px;
+}
+
+button {
+    padding: 8px;
+}

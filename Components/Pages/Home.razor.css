@@ -1,38 +1,101 @@
-﻿.home {
-    width: 100vw;
+﻿.container-home {
     min-height: 100vh;
     background-image: url('/Imagens/tela_fundo.png');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
-body {
-    margin: 0;
-    padding: 0;
-    background-image: url('/Imagens/tela_fundo.png');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    min-height: 100vh;
+/* LOGO */
+
+.logo-saborall {
+    width: 350px;
+    margin-bottom: 40px;
 }
 
-div {
-    color: blue;
+/* ÁREA LOGIN */
+
+.card-login {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+/* TÍTULOS */
+
+h2 {
+    font-size: 22px;
+    margin-bottom: 10px;
+}
+
+.subtitulo {
+    margin-bottom: 25px;
     text-align: center;
 }
 
-.btn-entrar {
-    display: inline-block;
-    padding: 12px 25px;
-    background-color: #ff69b4;
-    color: white;
-    text-decoration: none;
-    border-radius: 10px;
-    font-size: 18px;
-    font-weight: bold;
+/* INPUT */
+
+.campo-email {
+    width: 350px;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    margin-bottom: 15px;
 }
 
-    .btn-entrar:hover {
-        cursor: pointer;
-    }
+/* BOTÃO CONTINUAR */
+
+.btn-continuar {
+    width: 350px;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    background: black;
+    color: white;
+    cursor: pointer;
+    margin-bottom: 20px;
+}
+
+/* TEXTO OU */
+
+.ou {
+    margin-bottom: 15px;
+    color: gray;
+}
+
+/* GOOGLE */
+
+.btn-google {
+    width: 350px;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: white;
+    cursor: pointer;
+    margin-bottom: 10px;
+}
+
+/* APPLE */
+
+.btn-apple {
+    width: 350px;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: white;
+    cursor: pointer;
+    margin-bottom: 20px;
+}
+
+/* TERMOS */
+
+.termos {
+    width: 450px;
+    text-align: center;
+    font-size: 12px;
+}
