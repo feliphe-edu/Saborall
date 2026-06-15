@@ -1,0 +1,27 @@
+﻿.pagina-fornecedores {
+    padding: 30px;
+    min-height: 100vh;
+    background: #f7cfe0;
+}
+
+.cards-fornecedores {
+    display: grid;
+    grid-template-columns: repeat(auto-fill,minmax(320px,1fr));
+    gap: 20px;
+}
+
+.fornecedor {
+    background: white;
+    border-radius: 20px;
+    padding: 25px;
+    box-shadow: 0 3px 10px rgba(0,0,0,.1);
+}
+
+    .fornecedor h3 {
+        color: #4b89ff;
+        margin-bottom: 15px;
+    }
+
+    .fornecedor p {
+        margin: 8px 0;
+    }

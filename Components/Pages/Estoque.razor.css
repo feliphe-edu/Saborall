@@ -1,0 +1,43 @@
+﻿.pagina-estoque {
+    padding: 30px;
+    min-height: 100vh;
+    background: #f7cfe0;
+}
+
+.cards-resumo {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 20px;
+    margin-bottom: 25px;
+}
+
+.card {
+    background: white;
+    border-radius: 20px;
+    padding: 25px;
+    text-align: center;
+}
+
+    .card span {
+        font-size: 40px;
+        font-weight: bold;
+        color: #4b89ff;
+    }
+
+table {
+    width: 100%;
+    background: white;
+    border-radius: 20px;
+    border-collapse: collapse;
+    overflow: hidden;
+}
+
+th {
+    background: #8fd3e8;
+    padding: 15px;
+}
+
+td {
+    padding: 15px;
+    border-bottom: 1px solid #ddd;
+}
