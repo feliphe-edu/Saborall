@@ -1,33 +1,66 @@
 ﻿@page "/Criarsenha"
 @rendermode InteractiveServer
 
-<div class="container">
+<div class="pagina">
 
-    <h3>Criar Senha</h3>
+    <div class="container">
 
-    <input type="password" placeholder="Senha" @bind="Senha" />
-    <input type="password" placeholder="Confirmar senha" @bind="Confirmar" />
+        <img src="/Imagens/logo_.png"
+             alt="Logo Saborall"
+             class="logo" />
 
-    <button @onclick="Verificar">OK</button>
+        <h1>Criar uma senha</h1>
 
-    <p id="msg">@Mensagem</p>
+        <p class="descricao">
+            Crie uma senha segura para proteger sua conta
+        </p>
+
+        <input type="password"
+               placeholder="Digite sua senha"
+               @bind="Senha" />
+
+        <input type="password"
+               placeholder="Confirme sua senha"
+               @bind="ConfirmarSenha" />
+
+        <button @onclick="Continuar">
+            Continuar
+        </button>
+
+        <p class="senha-info">
+            A senha deve conter pelo menos 8 caracteres.
+        </p>
+
+        @if (!string.IsNullOrWhiteSpace(Mensagem))
+        {
+            <p class="mensagem">@Mensagem</p>
+        }
+
+    </div>
 
 </div>
 
 @code {
-    private string Senha { get; set; } = string.Empty;
-    private string Confirmar { get; set; } = string.Empty;
-    private string Mensagem { get; set; } = string.Empty;
 
-    private void Verificar()
+    private string Senha = "";
+    private string ConfirmarSenha = "";
+    private string Mensagem = "";
+
+    private void Continuar()
     {
-        if (!string.IsNullOrEmpty(Senha) && Senha == Confirmar)
+        if (Senha.Length < 8)
         {
-            Mensagem = "Senha correta";
+            Mensagem = "A senha deve conter pelo menos 8 caracteres.";
+            return;
         }
-        else
+
+        if (Senha != ConfirmarSenha)
         {
-            Mensagem = "Senha incorreta";
+            Mensagem = "As senhas não coincidem.";
+            return;
         }
+
+        Mensagem = "Senha criada com sucesso!";
     }
+
 }
