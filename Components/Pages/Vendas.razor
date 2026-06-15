@@ -1,55 +1,74 @@
-﻿@page "/vendas"
+﻿@page "/Vendas"
 
 <PageTitle>Vendas</PageTitle>
 
-<div class="pagina-vendas">
+<div class="dashboard">
 
-    <h1>Registro de Vendas</h1>
+    <div class="sidebar">
 
-    <table>
+        <img src="/Imagens/logo_.png" class="logo" />
 
-        <thead>
-            <tr>
-                <th>Data</th>
-                <th>Produto</th>
-                <th>Quantidade</th>
-                <th>Vendedor</th>
-                <th>Forma de Pagamento</th>
-                <th>Valor</th>
-            </tr>
-        </thead>
+        <nav>
+            <a href="/Pagina_inicial">🏠 Tela Inicial</a>
+            <a href="/Vendas" class="ativo">⚡ Vendas</a>
+            <a href="/Estoque">📦 Estoque</a>
+            <a href="/Produtos">🍦 Produtos</a>
+            <a href="/Fornecedores">🚚 Fornecedores</a>
+        </nav>
 
-        <tbody>
+    </div>
 
-            <tr>
-                <td>15/06/2026</td>
-                <td>Sorvete de Morango</td>
-                <td>3</td>
-                <td>Feliphe</td>
-                <td>PIX</td>
-                <td>R$ 24,00</td>
-            </tr>
+    <div class="conteudo">
 
-            <tr>
-                <td>15/06/2026</td>
-                <td>Açaí 500ml</td>
-                <td>1</td>
-                <td>Feliphe</td>
-                <td>Cartão</td>
-                <td>R$ 18,00</td>
-            </tr>
+        <h1>Registro de Vendas</h1>
 
-            <tr>
-                <td>15/06/2026</td>
-                <td>Milk Shake Chocolate</td>
-                <td>2</td>
-                <td>Tatiely</td>
-                <td>Dinheiro</td>
-                <td>R$ 30,00</td>
-            </tr>
+        <table>
 
-        </tbody>
+            <thead>
+                <tr>
+                    <th>Data</th>
+                    <th>Produto</th>
+                    <th>Quantidade</th>
+                    <th>Vendedor</th>
+                    <th>Forma de Pagamento</th>
+                    <th>Valor</th>
+                </tr>
+            </thead>
 
-    </table>
+            <tbody>
+
+                <tr>
+                    <td>15/06/2026</td>
+                    <td>Sorvete de Morango</td>
+                    <td>3</td>
+                    <td>Feliphe</td>
+                    <td>PIX</td>
+                    <td>R$ 24,00</td>
+                </tr>
+
+                <tr>
+                    <td>15/06/2026</td>
+                    <td>Açaí 500ml</td>
+                    <td>1</td>
+                    <td>Feliphe</td>
+                    <td>Cartão</td>
+                    <td>R$ 18,00</td>
+                </tr>
+
+                <tr>
+                    <td>15/06/2026</td>
+                    <td>Milk Shake Chocolate</td>
+                    <td>2</td>
+                    <td>Tatiely</td>
+                    <td>Dinheiro</td>
+                    <td>R$ 30,00</td>
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+    ```
 
 </div>

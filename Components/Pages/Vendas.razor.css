@@ -1,7 +1,43 @@
-﻿.pagina-vendas {
-    padding: 30px;
-    background: #f7cfe0;
+﻿.dashboard {
+    display: flex;
     min-height: 100vh;
+    background: #f7cfe0;
+}
+
+.sidebar {
+    width: 230px;
+    background: #8fd3e8;
+    padding: 20px;
+}
+
+.logo {
+    width: 120px;
+    display: block;
+    margin: auto;
+    margin-bottom: 30px;
+}
+
+.sidebar nav {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.sidebar a {
+    text-decoration: none;
+    color: black;
+    padding: 12px;
+    border-radius: 10px;
+}
+
+    .sidebar a:hover,
+    .sidebar .ativo {
+        background: white;
+    }
+
+.conteudo {
+    flex: 1;
+    padding: 30px;
 }
 
 h1 {

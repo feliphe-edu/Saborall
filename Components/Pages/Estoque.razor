@@ -1,73 +1,97 @@
-﻿@page "/estoque"
+﻿@page "/Estoque"
 
 <PageTitle>Estoque</PageTitle>
 
-<div class="pagina-estoque">
+<div class="dashboard">
 
-    <h1>Controle de Estoque</h1>
+    <div class="sidebar">
 
-    <div class="cards-resumo">
+        <img src="/Imagens/logo_.png"
+             alt="Logo Saborall"
+             class="logo" />
 
-        <div class="card">
-            <h3>Produtos em Estoque</h3>
-            <span>87</span>
-        </div>
-
-        <div class="card">
-            <h3>Baixo Estoque</h3>
-            <span>5</span>
-        </div>
-
-        <div class="card">
-            <h3>Reposição Necessária</h3>
-            <span>3</span>
-        </div>
+        <nav>
+            <a href="/Pagina_inicial">🏠 Tela Inicial</a>
+            <a href="/Vendas">⚡ Vendas</a>
+            <a href="/Estoque" class="ativo">📦 Estoque</a>
+            <a href="/Produtos">🍦 Produtos</a>
+            <a href="/Fornecedores">🚚 Fornecedores</a>
+        </nav>
 
     </div>
 
-    <table>
+    <div class="conteudo">
 
-        <thead>
-            <tr>
-                <th>Produto</th>
-                <th>Categoria</th>
-                <th>Quantidade</th>
-                <th>Status</th>
-            </tr>
-        </thead>
+        <div class="pagina-estoque">
 
-        <tbody>
+            <h1>Controle de Estoque</h1>
 
-            <tr>
-                <td>Sorvete de Morango</td>
-                <td>Sorvetes</td>
-                <td>25</td>
-                <td>🟢 Normal</td>
-            </tr>
+            <div class="cards-resumo">
 
-            <tr>
-                <td>Chocolate Supremo</td>
-                <td>Sorvetes</td>
-                <td>8</td>
-                <td>🟡 Atenção</td>
-            </tr>
+                <div class="card">
+                    <h3>Produtos em Estoque</h3>
+                    <span>87</span>
+                </div>
 
-            <tr>
-                <td>Leite Condensado</td>
-                <td>Ingredientes</td>
-                <td>3</td>
-                <td>🔴 Repor</td>
-            </tr>
+                <div class="card">
+                    <h3>Baixo Estoque</h3>
+                    <span>5</span>
+                </div>
 
-            <tr>
-                <td>Casquinha</td>
-                <td>Complementos</td>
-                <td>50</td>
-                <td>🟢 Normal</td>
-            </tr>
+                <div class="card">
+                    <h3>Reposição Necessária</h3>
+                    <span>3</span>
+                </div>
 
-        </tbody>
+            </div>
 
-    </table>
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Produto</th>
+                        <th>Categoria</th>
+                        <th>Quantidade</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    <tr>
+                        <td>Sorvete de Morango</td>
+                        <td>Sorvetes</td>
+                        <td>25</td>
+                        <td>🟢 Normal</td>
+                    </tr>
+
+                    <tr>
+                        <td>Chocolate Supremo</td>
+                        <td>Sorvetes</td>
+                        <td>8</td>
+                        <td>🟡 Atenção</td>
+                    </tr>
+
+                    <tr>
+                        <td>Leite Condensado</td>
+                        <td>Ingredientes</td>
+                        <td>3</td>
+                        <td>🔴 Repor</td>
+                    </tr>
+
+                    <tr>
+                        <td>Casquinha</td>
+                        <td>Complementos</td>
+                        <td>50</td>
+                        <td>🟢 Normal</td>
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
 
 </div>
