@@ -13,7 +13,10 @@ namespace Saborall.DAO
             _conexao = conexao;
         }
 
+        // =========================================================
         // LISTAR VENDAS
+        // =========================================================
+
         public List<Venda> Listar()
         {
             var lista = new List<Venda>();
@@ -37,14 +40,19 @@ namespace Saborall.DAO
                     IdVenda = reader.GetInt32("id_venda"),
                     DataVenda = reader.GetDateTime("data_venda"),
                     IdVendedor = reader.GetInt32("id_vendedor"),
-                    ValorTotal = reader.GetDecimal("valor_total")
+                    ValorTotal = reader.GetDecimal("valor_total"),
+                    FormaPagamento = reader.GetString("forma_pagamento")
                 });
             }
 
             return lista;
         }
 
+
+        // =========================================================
         // INSERIR VENDA
+        // =========================================================
+
         public int InserirVenda(Venda venda)
         {
             using var conexao = _conexao.CriarConexao();
@@ -52,23 +60,55 @@ namespace Saborall.DAO
 
             string sql = """
                 INSERT INTO Vendas
-                (data_venda, id_vendedor, valor_total)
+                (
+                    data_venda,
+                    id_vendedor,
+                    valor_total,
+                    forma_pagamento
+                )
                 VALUES
-                (@data, @vendedor, @total);
+                (
+                    @data,
+                    @vendedor,
+                    @total,
+                    @formaPagamento
+                );
 
                 SELECT LAST_INSERT_ID();
                 """;
 
             using var comando = new MySqlCommand(sql, conexao);
 
-            comando.Parameters.AddWithValue("@data", venda.DataVenda);
-            comando.Parameters.AddWithValue("@vendedor", venda.IdVendedor);
-            comando.Parameters.AddWithValue("@total", venda.ValorTotal);
+            comando.Parameters.AddWithValue(
+                "@data",
+                venda.DataVenda
+            );
 
-            return Convert.ToInt32(comando.ExecuteScalar());
+            comando.Parameters.AddWithValue(
+                "@vendedor",
+                venda.IdVendedor
+            );
+
+            comando.Parameters.AddWithValue(
+                "@total",
+                venda.ValorTotal
+            );
+
+            comando.Parameters.AddWithValue(
+                "@formaPagamento",
+                venda.FormaPagamento
+            );
+
+            return Convert.ToInt32(
+                comando.ExecuteScalar()
+            );
         }
 
+
+        // =========================================================
         // ATUALIZAR VENDA
+        // =========================================================
+
         public void Atualizar(Venda venda)
         {
             using var conexao = _conexao.CriarConexao();
@@ -76,23 +116,49 @@ namespace Saborall.DAO
 
             string sql = """
                 UPDATE Vendas
-                SET data_venda = @data,
+                SET
+                    data_venda = @data,
                     id_vendedor = @vendedor,
-                    valor_total = @total
+                    valor_total = @total,
+                    forma_pagamento = @formaPagamento
                 WHERE id_venda = @id
                 """;
 
             using var comando = new MySqlCommand(sql, conexao);
 
-            comando.Parameters.AddWithValue("@data", venda.DataVenda);
-            comando.Parameters.AddWithValue("@vendedor", venda.IdVendedor);
-            comando.Parameters.AddWithValue("@total", venda.ValorTotal);
-            comando.Parameters.AddWithValue("@id", venda.IdVenda);
+            comando.Parameters.AddWithValue(
+                "@data",
+                venda.DataVenda
+            );
+
+            comando.Parameters.AddWithValue(
+                "@vendedor",
+                venda.IdVendedor
+            );
+
+            comando.Parameters.AddWithValue(
+                "@total",
+                venda.ValorTotal
+            );
+
+            comando.Parameters.AddWithValue(
+                "@formaPagamento",
+                venda.FormaPagamento
+            );
+
+            comando.Parameters.AddWithValue(
+                "@id",
+                venda.IdVenda
+            );
 
             comando.ExecuteNonQuery();
         }
 
+
+        // =========================================================
         // EXCLUIR VENDA
+        // =========================================================
+
         public void Excluir(int id)
         {
             using var conexao = _conexao.CriarConexao();
@@ -104,12 +170,20 @@ namespace Saborall.DAO
                 """;
 
             using var comando = new MySqlCommand(sql, conexao);
-            comando.Parameters.AddWithValue("@id", id);
+
+            comando.Parameters.AddWithValue(
+                "@id",
+                id
+            );
 
             comando.ExecuteNonQuery();
         }
 
+
+        // =========================================================
         // LISTAR ITENS DE UMA VENDA
+        // =========================================================
+
         public List<ItemVenda> ListarItens(int idVenda)
         {
             var lista = new List<ItemVenda>();
@@ -125,7 +199,11 @@ namespace Saborall.DAO
                 """;
 
             using var comando = new MySqlCommand(sql, conexao);
-            comando.Parameters.AddWithValue("@idVenda", idVenda);
+
+            comando.Parameters.AddWithValue(
+                "@idVenda",
+                idVenda
+            );
 
             using var reader = comando.ExecuteReader();
 
@@ -145,7 +223,11 @@ namespace Saborall.DAO
             return lista;
         }
 
-        // INSERIR ITEM
+
+        // =========================================================
+        // INSERIR ITEM DA VENDA
+        // =========================================================
+
         public void InserirItem(ItemVenda item)
         {
             using var conexao = _conexao.CriarConexao();
@@ -153,23 +235,58 @@ namespace Saborall.DAO
 
             string sql = """
                 INSERT INTO ItensVenda
-                (id_venda, id_produto, quantidade, preco_unitario, subtotal)
+                (
+                    id_venda,
+                    id_produto,
+                    quantidade,
+                    preco_unitario,
+                    subtotal
+                )
                 VALUES
-                (@venda, @produto, @quantidade, @preco, @subtotal)
+                (
+                    @venda,
+                    @produto,
+                    @quantidade,
+                    @preco,
+                    @subtotal
+                )
                 """;
 
             using var comando = new MySqlCommand(sql, conexao);
 
-            comando.Parameters.AddWithValue("@venda", item.IdVenda);
-            comando.Parameters.AddWithValue("@produto", item.IdProduto);
-            comando.Parameters.AddWithValue("@quantidade", item.Quantidade);
-            comando.Parameters.AddWithValue("@preco", item.PrecoUnitario);
-            comando.Parameters.AddWithValue("@subtotal", item.Subtotal);
+            comando.Parameters.AddWithValue(
+                "@venda",
+                item.IdVenda
+            );
+
+            comando.Parameters.AddWithValue(
+                "@produto",
+                item.IdProduto
+            );
+
+            comando.Parameters.AddWithValue(
+                "@quantidade",
+                item.Quantidade
+            );
+
+            comando.Parameters.AddWithValue(
+                "@preco",
+                item.PrecoUnitario
+            );
+
+            comando.Parameters.AddWithValue(
+                "@subtotal",
+                item.Subtotal
+            );
 
             comando.ExecuteNonQuery();
         }
 
+
+        // =========================================================
         // EXCLUIR ITEM
+        // =========================================================
+
         public void ExcluirItem(int idItem)
         {
             using var conexao = _conexao.CriarConexao();
@@ -181,7 +298,11 @@ namespace Saborall.DAO
                 """;
 
             using var comando = new MySqlCommand(sql, conexao);
-            comando.Parameters.AddWithValue("@id", idItem);
+
+            comando.Parameters.AddWithValue(
+                "@id",
+                idItem
+            );
 
             comando.ExecuteNonQuery();
         }

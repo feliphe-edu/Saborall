@@ -1,6 +1,11 @@
 ﻿@page "/Criarsenha"
 @rendermode InteractiveServer
+
+@using Saborall.DAO
+@using Saborall.Models
+
 @inject NavigationManager Navigation
+@inject UsuarioDAO UsuarioDAO
 
 <div class="pagina">
 
@@ -43,12 +48,21 @@
 
 @code {
 
+    [SupplyParameterFromQuery]
+    public string? Email { get; set; }
+
     private string Senha = "";
     private string ConfirmarSenha = "";
     private string Mensagem = "";
 
     private void Continuar()
     {
+        if (string.IsNullOrWhiteSpace(Email))
+        {
+            Mensagem = "E-mail não informado.";
+            return;
+        }
+
         if (Senha.Length < 8)
         {
             Mensagem = "A senha deve conter pelo menos 8 caracteres.";
@@ -61,9 +75,32 @@
             return;
         }
 
-        Mensagem = "Senha criada com sucesso!";
+        try
+        {
+            var usuarioExistente = UsuarioDAO.BuscarPorEmail(Email);
 
-        Navigation.NavigateTo("/Pagina_inicial");
+            if (usuarioExistente != null)
+            {
+                Mensagem = "Este e-mail já está cadastrado.";
+                return;
+            }
+
+            var usuario = new Usuario
+            {
+                Email = Email,
+                Senha = Senha
+            };
+
+            UsuarioDAO.Inserir(usuario);
+
+            Mensagem = "Conta criada com sucesso!";
+
+            Navigation.NavigateTo("/Pagina_inicial");
+        }
+        catch (Exception ex)
+        {
+            Mensagem = "Erro ao criar conta: " + ex.Message;
+        }
     }
 
 }

@@ -53,30 +53,65 @@ namespace Saborall.DAO
         }
 
         // INSERIR
-        public void Inserir(Produto produto)
+        public int Inserir(Produto produto)
         {
             using var conexao = _conexao.CriarConexao();
             conexao.Open();
 
             string sql = """
-                INSERT INTO Produtos
-                (nome_produto, categoria, preco, id_fornecedor)
-                VALUES
-                (@nome, @categoria, @preco, @fornecedor)
-                """;
+        INSERT INTO Produtos
+        (
+            nome_produto,
+            categoria,
+            preco,
+            id_fornecedor
+        )
+        VALUES
+        (
+            @nome,
+            @categoria,
+            @preco,
+            @fornecedor
+        );
+
+        SELECT LAST_INSERT_ID();
+        """;
 
             using var comando = new MySqlCommand(sql, conexao);
 
-            comando.Parameters.AddWithValue("@nome", produto.NomeProduto);
-            comando.Parameters.AddWithValue("@categoria", produto.Categoria);
-            comando.Parameters.AddWithValue("@preco", produto.Preco);
+            comando.Parameters.AddWithValue(
+                "@nome",
+                produto.NomeProduto
+            );
+
+            comando.Parameters.AddWithValue(
+                "@categoria",
+                produto.Categoria
+            );
+
+            comando.Parameters.AddWithValue(
+                "@preco",
+                produto.Preco
+            );
 
             if (produto.IdFornecedor.HasValue)
-                comando.Parameters.AddWithValue("@fornecedor", produto.IdFornecedor.Value);
+            {
+                comando.Parameters.AddWithValue(
+                    "@fornecedor",
+                    produto.IdFornecedor.Value
+                );
+            }
             else
-                comando.Parameters.AddWithValue("@fornecedor", DBNull.Value);
+            {
+                comando.Parameters.AddWithValue(
+                    "@fornecedor",
+                    DBNull.Value
+                );
+            }
 
-            comando.ExecuteNonQuery();
+            return Convert.ToInt32(
+                comando.ExecuteScalar()
+            );
         }
 
         // ATUALIZAR

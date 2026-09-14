@@ -20,7 +20,8 @@
 
         <input type="email"
                placeholder="email@dominio.com"
-               class="campo-email" />
+               class="campo-email"
+               @bind="Email" />
 
         <button class="btn-continuar"
                 @onclick="IrParaCriarSenha">
@@ -49,9 +50,16 @@
 
 @code {
 
+    private string Email = "";
+
     private void IrParaCriarSenha()
     {
-        Navigation.NavigateTo("/Criarsenha");
+        if (string.IsNullOrWhiteSpace(Email))
+            return;
+
+        Navigation.NavigateTo(
+            $"/Criarsenha?email={Uri.EscapeDataString(Email)}"
+        );
     }
 
 }

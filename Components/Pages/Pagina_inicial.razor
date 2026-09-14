@@ -1,19 +1,26 @@
 ﻿@page "/Pagina_inicial"
+@rendermode InteractiveServer
 
-<PageTitle>Pagina inicial</PageTitle>
+@using Saborall.DAO
+@using Saborall.Models
+
+@inject VendaDAO VendaDAO
+
+<PageTitle>Página inicial</PageTitle>
 
 <div class="dashboard">
 
     <div class="sidebar">
 
-        <img src="/Imagens/logo_.png" class="logo" />
+        <img src="/Imagens/logo_.png"
+             class="logo" />
 
         <nav>
-            <a href="/Pagina_inicial" class="ativo"> Tela Inicial</a>
-            <a href="/Vendas"> Vendas</a>
-            <a href="/Estoque"> Estoque</a>
-            <a href="/Produtos"> Produtos</a>
-            <a href="/Fornecedores"> Fornecedores</a>
+            <a href="/Pagina_inicial" class="ativo">Tela Inicial</a>
+            <a href="/Vendas">Vendas</a>
+            <a href="/Estoque">Estoque</a>
+            <a href="/Produtos">Produtos</a>
+            <a href="/Fornecedores">Fornecedores</a>
         </nav>
 
     </div>
@@ -22,76 +29,92 @@
 
         <h1>Tela Inicial</h1>
 
-        <div class="cards-topo">
+        @if (vendas == null)
+        {
+            <p>Carregando informações...</p>
+        }
+        else
+        {
+            <div class="cards-topo">
 
-            <div class="card-faturamento">
-                <h2>Faturamento do Dia</h2>
-                <span>R$ 222,00</span>
-            </div>
+                <div class="card-faturamento">
 
-            <div class="card-grafico">
-                <h3>Movimentação Mensal</h3>
+                    <h2>Faturamento do Dia</h2>
 
-                <div class="grafico">
-                    <div style="height:30%"></div>
-                    <div style="height:45%"></div>
-                    <div style="height:60%"></div>
-                    <div style="height:50%"></div>
-                    <div style="height:70%"></div>
-                    <div style="height:80%"></div>
-                    <div style="height:65%"></div>
-                    <div style="height:90%"></div>
-                </div>
-            </div>
+                    <span>
+                        R$ @FaturamentoDia.ToString("F2")
+                    </span>
 
-        </div>
-
-        <div class="cards-baixo">
-
-            <div class="card-lista">
-
-                <h3>Menos Vendidos do Mês</h3>
-
-                <div class="produto">
-                    <span>Sorvete de Pitaya</span>
-                    <span>17%</span>
                 </div>
 
-                <div class="produto">
-                    <span>Sorvete de Jabuticaba</span>
-                    <span>15%</span>
-                </div>
+                <div class="card-grafico">
 
-                <div class="produto">
-                    <span>Sorvete de Queijo</span>
-                    <span>7%</span>
+                    <h3>Movimentação Mensal</h3>
+
+                    <div class="grafico">
+
+                        <div style="height:30%"></div>
+                        <div style="height:45%"></div>
+                        <div style="height:60%"></div>
+                        <div style="height:50%"></div>
+                        <div style="height:70%"></div>
+                        <div style="height:80%"></div>
+                        <div style="height:65%"></div>
+                        <div style="height:90%"></div>
+
+                    </div>
+
                 </div>
 
             </div>
 
-            <div class="card-lista">
+            <div class="cards-baixo">
 
-                <h3>Mais Vendidos do Mês</h3>
+                <div class="card-lista">
 
-                <div class="produto">
-                    <span>Chocolate Supremo</span>
-                    <span>71%</span>
+                    <h3>Vendas Registradas</h3>
+
+                    <div class="produto">
+                        <span>Total de vendas</span>
+                        <span>@vendas.Count</span>
+                    </div>
+
                 </div>
 
-                <div class="produto">
-                    <span>Morango Cremoso</span>
-                    <span>47%</span>
-                </div>
+                <div class="card-lista">
 
-                <div class="produto">
-                    <span>Ninho com Nutella</span>
-                    <span>39%</span>
+                    <h3>Resumo</h3>
+
+                    <div class="produto">
+                        <span>Faturamento total</span>
+                        <span>
+                            R$ @FaturamentoTotal.ToString("F2")
+                        </span>
+                    </div>
+
                 </div>
 
             </div>
-
-        </div>
+        }
 
     </div>
 
 </div>
+
+@code {
+
+    private List<Venda> vendas = new();
+
+    private decimal FaturamentoTotal =>
+        vendas.Sum(v => v.ValorTotal);
+
+    private decimal FaturamentoDia =>
+        vendas
+            .Where(v => v.DataVenda.Date == DateTime.Today)
+            .Sum(v => v.ValorTotal);
+
+    protected override void OnInitialized()
+    {
+        vendas = VendaDAO.Listar();
+    }
+}

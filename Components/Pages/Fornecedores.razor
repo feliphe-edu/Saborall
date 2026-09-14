@@ -1,4 +1,10 @@
 ﻿@page "/Fornecedores"
+@rendermode InteractiveServer
+
+@using Saborall.DAO
+@using Saborall.Models
+
+@inject FornecedorDAO FornecedorDAO
 
 <PageTitle>Fornecedores</PageTitle>
 
@@ -11,11 +17,11 @@
              class="logo" />
 
         <nav>
-            <a href="/Pagina_inicial" class="ativo"> Tela Inicial</a>
-            <a href="/Vendas"> Vendas</a>
-            <a href="/Estoque"> Estoque</a>
-            <a href="/Produtos"> Produtos</a>
-            <a href="/Fornecedores"> Fornecedores</a>
+            <a href="/Pagina_inicial">Tela Inicial</a>
+            <a href="/Vendas">Vendas</a>
+            <a href="/Estoque">Estoque</a>
+            <a href="/Produtos">Produtos</a>
+            <a href="/Fornecedores" class="ativo">Fornecedores</a>
         </nav>
 
     </div>
@@ -26,48 +32,67 @@
 
             <h1>Fornecedores</h1>
 
-            <div class="cards-fornecedores">
+            @if (fornecedores == null)
+            {
+                <p>Carregando fornecedores...</p>
+            }
+            else if (fornecedores.Count == 0)
+            {
+                <p>Nenhum fornecedor cadastrado.</p>
+            }
+            else
+            {
+                <div class="cards-fornecedores">
 
-                <div class="fornecedor">
+                    @foreach (var fornecedor in fornecedores)
+                    {
+                        <div class="fornecedor">
 
-                    <h3>Distribuidora Gelada</h3>
+                            <h3>@fornecedor.NomeFantasia</h3>
 
-                    <p><strong>Contato:</strong> (69) 99999-1111</p>
+                            <p>
+                                <strong>Empresa:</strong>
+                                @fornecedor.NomeEmpresa
+                            </p>
 
-                    <p><strong>Email:</strong> gelada@email.com</p>
+                            <p>
+                                <strong>Contato:</strong>
+                                @fornecedor.Telefone
+                            </p>
 
-                    <p><strong>Produtos:</strong> Sorvetes e Açaí</p>
+                            <p>
+                                <strong>Email:</strong>
+                                @fornecedor.Email
+                            </p>
+
+                            <p>
+                                <strong>CNPJ:</strong>
+                                @fornecedor.Cnpj
+                            </p>
+
+                            <p>
+                                <strong>Endereço:</strong>
+                                @fornecedor.Endereco
+                            </p>
+
+                        </div>
+                    }
 
                 </div>
-
-                <div class="fornecedor">
-
-                    <h3>Casa das Casquinhas</h3>
-
-                    <p><strong>Contato:</strong> (69) 99999-2222</p>
-
-                    <p><strong>Email:</strong> casquinhas@email.com</p>
-
-                    <p><strong>Produtos:</strong> Casquinhas e Copos</p>
-
-                </div>
-
-                <div class="fornecedor">
-
-                    <h3>Doces Premium</h3>
-
-                    <p><strong>Contato:</strong> (69) 99999-3333</p>
-
-                    <p><strong>Email:</strong> doces@email.com</p>
-
-                    <p><strong>Produtos:</strong> Coberturas e Complementos</p>
-
-                </div>
-
-            </div>
+            }
 
         </div>
 
     </div>
 
 </div>
+
+@code {
+
+    private List<Fornecedor> fornecedores = new();
+
+    protected override void OnInitialized()
+    {
+        fornecedores = FornecedorDAO.Listar();
+    }
+}

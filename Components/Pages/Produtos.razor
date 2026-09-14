@@ -1,9 +1,13 @@
 ﻿@page "/Produtos"
+@rendermode InteractiveServer
 
 @using Saborall.DAO
 @using Saborall.Models
+@using EstoqueModel = Saborall.Models.Estoque
 
 @inject ProdutoDAO ProdutoDAO
+@inject FornecedorDAO FornecedorDAO
+@inject EstoqueDAO EstoqueDAO
 
 <PageTitle>Produtos</PageTitle>
 
@@ -16,11 +20,11 @@
              class="logo" />
 
         <nav>
-            <a href="/Pagina_inicial" class="ativo"> Tela Inicial</a>
-            <a href="/Vendas"> Vendas</a>
-            <a href="/Estoque"> Estoque</a>
-            <a href="/Produtos"> Produtos</a>
-            <a href="/Fornecedores"> Fornecedores</a>
+            <a href="/Pagina_inicial">Tela Inicial</a>
+            <a href="/Vendas">Vendas</a>
+            <a href="/Estoque">Estoque</a>
+            <a href="/Produtos" class="ativo">Produtos</a>
+            <a href="/Fornecedores">Fornecedores</a>
         </nav>
 
     </div>
@@ -31,60 +35,445 @@
 
             <h1>Produtos da Sorveteria</h1>
 
-            <div class="grid-produtos">
 
-                <div class="produto-card">
-                    <img src="https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=500" />
-                    <h3>Chocolate Supremo</h3>
-                    <p>R$ 19,99</p>
-                </div>
+            <!-- ========================================= -->
+            <!-- FORMULÁRIO DE PRODUTO                     -->
+            <!-- ========================================= -->
 
-                <div class="produto-card">
-                    <img src="https://conteudo.imguol.com.br/70/2015/09/22/sorvete-de-morango-1442958069731_v2_1x1.jpg" />
-                    <h3>Morango Cremoso</h3>
-                    <p>R$ 12,00</p>
-                </div>
+            <div class="formulario-produto">
 
-                <div class="produto-card">
-                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTMpWXwjW52PRcf7OAQxr9l8v2A5YNaqCxAaEDCmptQIKJy69csnl2E4cc&s=10" />
-                    <h3>Ninho com Nutella</h3>
-                    <p>R$ 17,00</p>
-                </div>
-
-                <div class="produto-card">
-                    <img src="https://pecadodagula.lojadigitalds.com.br/_core/_uploads/331/2025/04/1619130425b2c7edd5dc.png" />
-                    <h3>Açaí 500ml</h3>
-                    <p>R$ 21,99</p>
-                </div>
-
-                <div class="produto-card">
-                    <img src="https://sonhogelado.multiappbrasil.tec.br/_core/_uploads//produtos/imagem_2024-07-21_15-23-41.jpg" />
-                    <h3>Milk-Shake de chocolate - 300ml </h3>
-                    <p>R$ 14,00</p>
-                </div>
-
-                <div class="produto-card">
-                    <img src="https://i.pinimg.com/736x/7c/97/c7/7c97c7b7564d7e4c10be15aa3b80a1c8.jpg" />
-                    <h3>Milk-Shake de maracujá - 400ml</h3>
-                    <p>R$ 17,00</p>
-                </div>
-
-                <div class="produto-card">
-                    <img src="https://www.dicasedicas.com.br/_next/image?url=https%3A%2F%2Fd135llbe2j366l.cloudfront.net%2Fcompressed%2Fmilk-shake-de-laka-google.webp&w=828&q=50" />
-                    <h3>Milk-Shake de leite condensado - 500ml</h3>
-                    <p>R$ 19,00</p>
-                </div>
-                
+                <h2>
+                    @(modoEdicao ? "Editar Produto" : "Cadastrar Produto")
+                </h2>
 
 
+                <!-- NOME -->
+                <input type="text"
+                       placeholder="Nome do produto"
+                       @bind="novoProduto.NomeProduto" />
 
-                
 
-                
+                <!-- CATEGORIA -->
+                <input type="text"
+                       placeholder="Categoria"
+                       @bind="novoProduto.Categoria" />
+
+
+                <!-- PREÇO -->
+                <input type="number"
+                       step="0.01"
+                       min="0"
+                       placeholder="Preço"
+                       @bind="novoProduto.Preco" />
+
+
+                <!-- FORNECEDOR -->
+                <select @bind="novoProduto.IdFornecedor">
+
+                    <option value="">
+                        Selecione o fornecedor
+                    </option>
+
+                    @foreach (var fornecedor in fornecedores)
+                    {
+                        <option value="@fornecedor.IdFornecedor">
+                            @fornecedor.NomeFantasia
+                        </option>
+                    }
+
+                </select>
+
+
+                <!-- BOTÕES -->
+                @if (modoEdicao)
+                {
+                    <button @onclick="SalvarEdicao">
+                        Salvar alteração
+                    </button>
+
+                    <button @onclick="CancelarEdicao">
+                        Cancelar
+                    </button>
+                }
+                else
+                {
+                    <button @onclick="CadastrarProduto">
+                        Cadastrar produto
+                    </button>
+                }
+
+
+                <!-- MENSAGEM -->
+                @if (!string.IsNullOrWhiteSpace(Mensagem))
+                {
+                    <p class="mensagem">
+                        @Mensagem
+                    </p>
+                }
+
             </div>
+
+
+            <!-- ========================================= -->
+            <!-- LISTA DE PRODUTOS                         -->
+            <!-- ========================================= -->
+            @if (produtos == null)
+            {
+                <p>Carregando produtos...</p>
+            }
+            else if (produtos.Count == 0)
+            {
+                <p>Nenhum produto cadastrado.</p>
+            }
+            else
+            {
+                <div class="grid-produtos">
+
+                    @foreach (var produto in produtos)
+                    {
+                        <div class="produto-card">
+
+                            <img src="@ObterImagem(produto.NomeProduto)"
+                                 alt="@produto.NomeProduto" />
+
+
+                            <h3>
+                                @produto.NomeProduto
+                            </h3>
+
+
+                            <p>
+                                @produto.Categoria
+                            </p>
+
+
+                            <p>
+                                R$ @produto.Preco.ToString("F2")
+                            </p>
+
+
+                            @if (produto.IdFornecedor.HasValue)
+                            {
+                                var fornecedor = fornecedores.FirstOrDefault(
+                                    f => f.IdFornecedor == produto.IdFornecedor.Value
+                                );
+
+                                <p>
+                                    <strong>Fornecedor:</strong>
+                                    @(fornecedor?.NomeFantasia ?? "Não encontrado")
+                                </p>
+                            }
+                            else
+                            {
+                                <p>
+                                    <strong>Fornecedor:</strong>
+                                    Não informado
+                                </p>
+                            }
+
+
+                            <!-- BOTÃO EDITAR -->
+                            <button @onclick="() => EditarProduto(produto)">
+                                Editar
+                            </button>
+
+
+                            <!-- BOTÃO EXCLUIR -->
+                            <button @onclick="() => ExcluirProduto(produto.IdProduto)">
+                                Excluir
+                            </button>
+
+                        </div>
+                    }
+
+                </div>
+            }
 
         </div>
 
     </div>
 
 </div>
+
+
+@code {
+
+    // =========================================
+    // LISTAS
+    // =========================================
+
+    private List<Produto> produtos = new();
+
+    private List<Fornecedor> fornecedores = new();
+
+
+    // =========================================
+    // PRODUTO DO FORMULÁRIO
+    // =========================================
+
+    private Produto novoProduto = new();
+
+
+    // =========================================
+    // CONTROLA SE ESTÁ EDITANDO
+    // =========================================
+
+    private bool modoEdicao = false;
+
+
+    // =========================================
+    // MENSAGEM PARA O USUÁRIO
+    // =========================================
+
+    private string Mensagem = "";
+
+
+    // =========================================
+    // CARREGAMENTO INICIAL
+    // =========================================
+
+    protected override void OnInitialized()
+    {
+        CarregarDados();
+    }
+
+
+    // =========================================
+    // CARREGAR PRODUTOS E FORNECEDORES
+    // =========================================
+
+    private void CarregarDados()
+    {
+        produtos = ProdutoDAO.Listar();
+
+        fornecedores = FornecedorDAO.Listar();
+    }
+
+
+    // =========================================
+    // CADASTRAR PRODUTO
+    // =========================================
+
+    private void CadastrarProduto()
+    {
+        Mensagem = "";
+
+
+        // Verifica nome
+        if (string.IsNullOrWhiteSpace(novoProduto.NomeProduto))
+        {
+            Mensagem = "Digite o nome do produto.";
+            return;
+        }
+
+
+        // Verifica categoria
+        if (string.IsNullOrWhiteSpace(novoProduto.Categoria))
+        {
+            Mensagem = "Digite a categoria do produto.";
+            return;
+        }
+
+
+        // Verifica preço
+        if (novoProduto.Preco <= 0)
+        {
+            Mensagem = "Digite um preço válido.";
+            return;
+        }
+
+
+        try
+        {
+            // Salva o produto no banco
+            int idProduto = ProdutoDAO.Inserir(novoProduto);
+
+            var estoque = new EstoqueModel
+            {
+                IdProduto = idProduto,
+                QuantidadeDisponivel = 0
+            };
+
+            EstoqueDAO.Inserir(estoque);
+
+            Mensagem = "Produto cadastrado com sucesso!";
+
+
+            // Limpa os campos
+            novoProduto = new Produto();
+
+
+            // Atualiza a lista
+            CarregarDados();
+        }
+        catch (Exception ex)
+        {
+            Mensagem =
+                "Erro ao cadastrar produto: " + ex.Message;
+        }
+    }
+
+
+    // =========================================
+    // PREPARAR PRODUTO PARA EDIÇÃO
+    // =========================================
+
+    private void EditarProduto(Produto produto)
+    {
+        // Cria uma cópia do produto
+        // para não alterar a lista imediatamente.
+
+        novoProduto = new Produto
+        {
+            IdProduto = produto.IdProduto,
+
+            NomeProduto = produto.NomeProduto,
+
+            Categoria = produto.Categoria,
+
+            Preco = produto.Preco,
+
+            IdFornecedor = produto.IdFornecedor
+        };
+
+
+        // Ativa modo de edição
+        modoEdicao = true;
+
+
+        // Limpa mensagem anterior
+        Mensagem = "";
+    }
+
+
+    // =========================================
+    // SALVAR ALTERAÇÃO
+    // =========================================
+
+    private void SalvarEdicao()
+    {
+        Mensagem = "";
+
+
+        // Verifica nome
+        if (string.IsNullOrWhiteSpace(novoProduto.NomeProduto))
+        {
+            Mensagem = "Digite o nome do produto.";
+            return;
+        }
+
+
+        // Verifica categoria
+        if (string.IsNullOrWhiteSpace(novoProduto.Categoria))
+        {
+            Mensagem = "Digite a categoria do produto.";
+            return;
+        }
+
+
+        // Verifica preço
+        if (novoProduto.Preco <= 0)
+        {
+            Mensagem = "Digite um preço válido.";
+            return;
+        }
+
+
+        try
+        {
+            // Atualiza no MySQL
+            ProdutoDAO.Atualizar(novoProduto);
+
+
+            // Mensagem
+            Mensagem = "Produto atualizado com sucesso!";
+
+
+            // Limpa formulário
+            novoProduto = new Produto();
+
+
+            // Sai do modo de edição
+            modoEdicao = false;
+
+
+            // Atualiza a lista
+            CarregarDados();
+        }
+        catch (Exception ex)
+        {
+            Mensagem =
+                "Erro ao atualizar produto: " + ex.Message;
+        }
+    }
+
+
+    // =========================================
+    // CANCELAR EDIÇÃO
+    // =========================================
+
+    private void CancelarEdicao()
+    {
+        // Limpa formulário
+        novoProduto = new Produto();
+
+
+        // Volta para modo cadastro
+        modoEdicao = false;
+
+
+        // Limpa mensagem
+        Mensagem = "";
+    }
+
+
+    // =========================================
+    // EXCLUIR PRODUTO
+    // =========================================
+
+    private void ExcluirProduto(int id)
+    {
+        try
+        {
+            // Exclui do banco
+            ProdutoDAO.Excluir(id);
+
+
+            // Mensagem
+            Mensagem = "Produto excluído com sucesso!";
+
+
+            // Atualiza lista
+            CarregarDados();
+        }
+        catch (Exception ex)
+        {
+            Mensagem =
+                "Não foi possível excluir o produto: " + ex.Message;
+        }
+    }
+
+
+    // =========================================
+    // IMAGENS DOS PRODUTOS
+    // =========================================
+
+    private string ObterImagem(string nome)
+    {
+        return nome switch
+        {
+            "Chocolate Supremo" =>
+                "https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=500",
+
+            "Morango Cremoso" =>
+                "https://conteudo.imguol.com.br/70/2015/09/22/sorvete-de-morango-1442958069731_v2_1x1.jpg",
+
+            "Ninho com Nutella" =>
+                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTMpWXwjW52PRcf7OAQxr9l8v2A5YNaqCxAaEDCmptQIKJy69csnl2E4cc&s=10",
+
+            _ =>
+                "https://images.unsplash.com/photo-1570197788417-0e82375c9371?w=500"
+        };
+    }
+
+}

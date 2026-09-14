@@ -96,6 +96,7 @@ CREATE TABLE Vendas (
     data_venda DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     id_vendedor INT NOT NULL,
     valor_total DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+    forma_pagamento VARCHAR(30) NOT NULL DEFAULT 'Não informado',
 
     CONSTRAINT fk_vendas_vendedores
         FOREIGN KEY (id_vendedor)
@@ -200,16 +201,17 @@ VALUES
 -- =========================================================
 
 INSERT INTO Vendas
-(data_venda, id_vendedor, valor_total)
+(data_venda, id_vendedor, valor_total, forma_pagamento)
 VALUES
-('2026-08-10 10:00:00', 1, 42.00),
-('2026-08-10 10:30:00', 2, 27.00),
-('2026-08-10 11:00:00', 3, 15.00),
-('2026-08-10 11:30:00', 1, 24.00),
-('2026-08-10 12:00:00', 4, 11.50);
+('2026-08-10 10:00:00', 1, 42.00, 'PIX'),
+('2026-08-10 10:30:00', 2, 27.00, 'Cartão'),
+('2026-08-10 11:00:00', 3, 15.00, 'Dinheiro'),
+('2026-08-10 11:30:00', 1, 24.00, 'PIX'),
+('2026-08-10 12:00:00', 4, 11.50, 'Cartão');
 
 
 -- ITENS DAS VENDAS
+
 
 INSERT INTO ItensVenda
 (id_venda, id_produto, quantidade, preco_unitario, subtotal)
@@ -286,3 +288,4 @@ INNER JOIN ItensVenda iv
 INNER JOIN Produtos p
     ON iv.id_produto = p.id_produto
 ORDER BY v.id_venda;
+

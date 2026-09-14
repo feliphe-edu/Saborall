@@ -43,6 +43,7 @@ namespace Saborall.DAO
             return lista;
         }
 
+
         // BUSCAR PELO PRODUTO
         public Estoque? BuscarPorProduto(int idProduto)
         {
@@ -73,6 +74,7 @@ namespace Saborall.DAO
             return null;
         }
 
+
         // INSERIR
         public void Inserir(Estoque estoque)
         {
@@ -94,6 +96,7 @@ namespace Saborall.DAO
             comando.ExecuteNonQuery();
         }
 
+
         // ATUALIZAR
         public void Atualizar(Estoque estoque)
         {
@@ -114,6 +117,7 @@ namespace Saborall.DAO
             comando.ExecuteNonQuery();
         }
 
+
         // EXCLUIR
         public void Excluir(int id)
         {
@@ -130,6 +134,7 @@ namespace Saborall.DAO
 
             comando.ExecuteNonQuery();
         }
+
 
         // ALTERAR SOMENTE A QUANTIDADE
         public void AtualizarQuantidade(int idProduto, int quantidade)
@@ -149,6 +154,30 @@ namespace Saborall.DAO
             comando.Parameters.AddWithValue("@idProduto", idProduto);
 
             comando.ExecuteNonQuery();
+        }
+
+
+        // BAIXAR ESTOQUE AUTOMATICAMENTE APÓS UMA VENDA
+        public bool BaixarEstoque(int idProduto, int quantidade)
+        {
+            using var conexao = _conexao.CriarConexao();
+            conexao.Open();
+
+            string sql = """
+                UPDATE Estoque
+                SET quantidade_disponivel = quantidade_disponivel - @quantidade
+                WHERE id_produto = @idProduto
+                  AND quantidade_disponivel >= @quantidade
+                """;
+
+            using var comando = new MySqlCommand(sql, conexao);
+
+            comando.Parameters.AddWithValue("@quantidade", quantidade);
+            comando.Parameters.AddWithValue("@idProduto", idProduto);
+
+            int linhasAlteradas = comando.ExecuteNonQuery();
+
+            return linhasAlteradas > 0;
         }
     }
 }

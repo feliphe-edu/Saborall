@@ -1,4 +1,12 @@
 ﻿@page "/Estoque"
+@rendermode InteractiveServer
+
+@using Saborall.DAO
+@using Saborall.Models
+@using EstoqueModel = Saborall.Models.Estoque
+
+@inject EstoqueDAO EstoqueDAO
+@inject ProdutoDAO ProdutoDAO
 
 <PageTitle>Estoque</PageTitle>
 
@@ -11,11 +19,11 @@
              class="logo" />
 
         <nav>
-            <a href="/Pagina_inicial" class="ativo"> Tela Inicial</a>
-            <a href="/Vendas"> Vendas</a>
-            <a href="/Estoque"> Estoque</a>
-            <a href="/Produtos"> Produtos</a>
-            <a href="/Fornecedores"> Fornecedores</a>
+            <a href="/Pagina_inicial">Tela Inicial</a>
+            <a href="/Vendas">Vendas</a>
+            <a href="/Estoque" class="ativo">Estoque</a>
+            <a href="/Produtos">Produtos</a>
+            <a href="/Fornecedores">Fornecedores</a>
         </nav>
 
     </div>
@@ -26,95 +34,106 @@
 
             <h1>Controle de Estoque</h1>
 
-            <div class="cards-resumo">
+            @if (estoque == null || produtos == null)
+            {
+                <p>Carregando estoque...</p>
+            }
+            else
+            {
+                <div class="cards-resumo">
 
-                <div class="card">
-                    <h3>Produtos em Estoque</h3>
-                    <span>87</span>
+                    <div class="card">
+                        <h3>Produtos em Estoque</h3>
+                        <span>@QuantidadeTotal</span>
+                    </div>
+
+                    <div class="card">
+                        <h3>Baixo Estoque</h3>
+                        <span>@QuantidadeBaixoEstoque</span>
+                    </div>
+
+                    <div class="card">
+                        <h3>Reposição Necessária</h3>
+                        <span>@QuantidadeReposicao</span>
+                    </div>
+
                 </div>
 
-                <div class="card">
-                    <h3>Baixo Estoque</h3>
-                    <span>5</span>
-                </div>
+                <table>
 
-                <div class="card">
-                    <h3>Reposição Necessária</h3>
-                    <span>3</span>
-                </div>
+                    <thead>
+                        <tr>
+                            <th>Produto</th>
+                            <th>Categoria</th>
+                            <th>Quantidade</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
 
-            </div>
+                    <tbody>
 
-            <table>
+                        @foreach (var item in estoque)
+                        {
+                            var produto = produtos.FirstOrDefault(
+                                p => p.IdProduto == item.IdProduto
+                            );
 
-                <thead>
-                    <tr>
-                        <th>Produto</th>
-                        <th>Categoria</th>
-                        <th>Quantidade</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
+                            if (produto != null)
+                            {
+                                <tr>
+                                    <td>@produto.NomeProduto</td>
 
-                <tbody>
+                                    <td>@produto.Categoria</td>
 
-                    <tr>
-                        <td>Chocolate Supremo</td>
-                        <td>Sorvete</td>
-                        <td>25</td>
-                        <td>🟢 Normal</td>
-                    </tr>
+                                    <td>@item.QuantidadeDisponivel</td>
 
-                    <tr>
-                        <td>Morango Cremoso</td>
-                        <td>Sorvete</td>
-                        <td>8</td>
-                        <td>🟡 Atenção</td>
-                    </tr>
+                                    <td>@ObterStatus(item.QuantidadeDisponivel)</td>
+                                </tr>
+                            }
+                        }
 
-                    <tr>
-                        <td>Ninho com Nutella</td>
-                        <td>Sorvete</td>
-                        <td>3</td>
-                        <td>🔴 Repor</td>
-                    </tr>
+                    </tbody>
 
-                    <tr>
-                        <td>Açaí 500ml</td>
-                        <td>Sorvete</td>
-                        <td>50</td>
-                        <td>🟢 Normal</td>
-                    </tr>
-
-                    <tr>
-                        <td>Milk-Shake de chocolate - 300ml</td>
-                        <td>Sorvete</td>
-                        <td>50</td>
-                        <td>🟢 Normal</td>
-                    </tr>
-
-                    <tr>
-                        <td>Milk-Shake de maracujá - 400ml</td>
-                        <td>Sorvete</td>
-                        <td>50</td>
-                        <td>🟢 Normal</td>
-                    </tr>
-
-                    <tr>
-                        <td>Milk-Shake de leite condensado - 500ml</td>
-                        <td>Sorvete</td>
-                        <td>50</td>
-                        <td>🟢 Normal</td>
-                    </tr>
-
-                    
-                    
-                </tbody>
-
-            </table>
+                </table>
+            }
 
         </div>
 
     </div>
 
 </div>
+
+@code {
+
+    private List<EstoqueModel> estoque = new();
+    private List<Produto> produtos = new();
+
+    private int QuantidadeTotal =>
+        estoque.Sum(e => e.QuantidadeDisponivel);
+
+    private int QuantidadeBaixoEstoque =>
+        estoque.Count(e =>
+            e.QuantidadeDisponivel > 0 &&
+            e.QuantidadeDisponivel <= 10);
+
+    private int QuantidadeReposicao =>
+        estoque.Count(e =>
+            e.QuantidadeDisponivel <= 5);
+
+    protected override void OnInitialized()
+    {
+        estoque = EstoqueDAO.Listar();
+        produtos = ProdutoDAO.Listar();
+    }
+
+    private string ObterStatus(int quantidade)
+    {
+        if (quantidade <= 5)
+            return "🔴 Repor";
+
+        if (quantidade <= 10)
+            return "🟡 Atenção";
+
+        return "🟢 Normal";
+    }
+}
