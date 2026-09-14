@@ -7,7 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Folder Include="banco_de_dados\" />
     <Folder Include="wwwroot\Imagens\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MySql.Data" Version="26.7.0" />
   </ItemGroup>
 
 </Project>
