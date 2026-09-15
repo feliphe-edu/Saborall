@@ -212,7 +212,6 @@ VALUES
 
 -- ITENS DAS VENDAS
 
-
 INSERT INTO ItensVenda
 (id_venda, id_produto, quantidade, preco_unitario, subtotal)
 VALUES
