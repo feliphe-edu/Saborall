@@ -28,7 +28,6 @@
             Continuar
         </button>
 
-
         <p class="ou">OU</p>
 
         <button class="btn-google">
@@ -43,6 +42,19 @@
             Ao clicar em continuar, você concorda com os nossos
             Termos de Serviço e com a Política de Privacidade.
         </p>
+
+        <div class="login-area">
+
+            <p class="ja-tem-conta">
+                Já possui uma conta?
+            </p>
+
+            <button class="btn-login"
+                    @onclick="IrParaLogin">
+                Entrar na conta
+            </button>
+
+        </div>
 
     </div>
 
@@ -60,6 +72,11 @@
         Navigation.NavigateTo(
             $"/Criarsenha?email={Uri.EscapeDataString(Email)}"
         );
+    }
+
+    private void IrParaLogin()
+    {
+        Navigation.NavigateTo("/login");
     }
 
 }

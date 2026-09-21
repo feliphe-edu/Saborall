@@ -1,0 +1,110 @@
+﻿@page "/login"
+@rendermode InteractiveServer
+
+@using Saborall.DAO
+@using Saborall.Models
+
+@inject NavigationManager Navigation
+@inject UsuarioDAO UsuarioDAO
+
+<div class="pagina">
+
+    <div class="container">
+
+        <img src="/Imagens/logo_.png"
+             alt="Logo Saborall"
+             class="logo" />
+
+        <h1>Entrar na conta</h1>
+
+        <p class="descricao">
+            Entre com seu e-mail e senha para acessar sua conta
+        </p>
+
+        <input type="email"
+               placeholder="Digite seu e-mail"
+               @bind="Email" />
+
+        <input type="password"
+               placeholder="Digite sua senha"
+               @bind="Senha" />
+
+        <button @onclick="Entrar">
+            Entrar
+        </button>
+
+        @if (!string.IsNullOrWhiteSpace(Mensagem))
+        {
+            <p class="mensagem">@Mensagem</p>
+        }
+
+        <p class="senha-info">
+            Ainda não possui uma conta?
+        </p>
+
+        <button @onclick="IrParaCriarConta">
+            Criar uma conta
+        </button>
+
+    </div>
+
+</div>
+
+@code {
+
+    private string Email = "";
+    private string Senha = "";
+    private string Mensagem = "";
+
+    private void Entrar()
+    {
+        Mensagem = "";
+
+        // Verifica se o e-mail foi informado
+        if (string.IsNullOrWhiteSpace(Email))
+        {
+            Mensagem = "Digite seu e-mail.";
+            return;
+        }
+
+        // Verifica se a senha foi informada
+        if (string.IsNullOrWhiteSpace(Senha))
+        {
+            Mensagem = "Digite sua senha.";
+            return;
+        }
+
+        try
+        {
+            // Procura o e-mail no banco de dados
+            var usuario = UsuarioDAO.BuscarPorEmail(Email.Trim());
+
+            // Se não encontrou o e-mail
+            if (usuario == null)
+            {
+                Mensagem = "E-mail não cadastrado.";
+                return;
+            }
+
+            // Verifica se a senha está correta
+            if (usuario.Senha != Senha)
+            {
+                Mensagem = "Senha incorreta.";
+                return;
+            }
+
+            // Login realizado com sucesso
+            Navigation.NavigateTo("/Pagina_inicial");
+        }
+        catch (Exception ex)
+        {
+            Mensagem = "Erro ao realizar login: " + ex.Message;
+        }
+    }
+
+    private void IrParaCriarConta()
+    {
+        Navigation.NavigateTo("/");
+    }
+
+}
