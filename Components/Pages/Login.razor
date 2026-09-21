@@ -21,15 +21,23 @@
             Entre com seu e-mail e senha para acessar sua conta
         </p>
 
-        <input type="email"
-               placeholder="Digite seu e-mail"
-               @bind="Email" />
+        <div class="campo">
+            <label for="email">E-mail</label>
+            <input id="email"
+                   type="email"
+                   placeholder="Digite seu e-mail"
+                   @bind="Email" />
+        </div>
 
-        <input type="password"
-               placeholder="Digite sua senha"
-               @bind="Senha" />
+        <div class="campo">
+            <label for="senha">Senha</label>
+            <input id="senha"
+                   type="password"
+                   placeholder="Digite sua senha"
+                   @bind="Senha" />
+        </div>
 
-        <button @onclick="Entrar">
+        <button class="botao-entrar" @onclick="Entrar">
             Entrar
         </button>
 
@@ -38,11 +46,13 @@
             <p class="mensagem">@Mensagem</p>
         }
 
+        <div class="separador"></div>
+
         <p class="senha-info">
             Ainda não possui uma conta?
         </p>
 
-        <button @onclick="IrParaCriarConta">
+        <button class="botao-criar" @onclick="IrParaCriarConta">
             Criar uma conta
         </button>
 
@@ -60,14 +70,12 @@
     {
         Mensagem = "";
 
-        // Verifica se o e-mail foi informado
         if (string.IsNullOrWhiteSpace(Email))
         {
             Mensagem = "Digite seu e-mail.";
             return;
         }
 
-        // Verifica se a senha foi informada
         if (string.IsNullOrWhiteSpace(Senha))
         {
             Mensagem = "Digite sua senha.";
@@ -76,24 +84,20 @@
 
         try
         {
-            // Procura o e-mail no banco de dados
             var usuario = UsuarioDAO.BuscarPorEmail(Email.Trim());
 
-            // Se não encontrou o e-mail
             if (usuario == null)
             {
                 Mensagem = "E-mail não cadastrado.";
                 return;
             }
 
-            // Verifica se a senha está correta
             if (usuario.Senha != Senha)
             {
                 Mensagem = "Senha incorreta.";
                 return;
             }
 
-            // Login realizado com sucesso
             Navigation.NavigateTo("/Pagina_inicial");
         }
         catch (Exception ex)
@@ -106,5 +110,4 @@
     {
         Navigation.NavigateTo("/");
     }
-
 }
