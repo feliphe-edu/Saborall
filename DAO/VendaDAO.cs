@@ -59,23 +59,27 @@ namespace Saborall.DAO
             conexao.Open();
 
             string sql = """
-                INSERT INTO Vendas
-                (
-                    data_venda,
-                    id_vendedor,
-                    valor_total,
-                    forma_pagamento
-                )
-                VALUES
-                (
-                    @data,
-                    @vendedor,
-                    @total,
-                    @formaPagamento
-                );
+        INSERT INTO Vendas
+        (
+            data_venda,
+            id_produto,
+            id_vendedor,
+            quantidade,
+            valor_total,
+            forma_pagamento
+        )
+        VALUES
+        (
+            @data,
+            @produto,
+            @vendedor,
+            @quantidade,
+            @total,
+            @formaPagamento
+        );
 
-                SELECT LAST_INSERT_ID();
-                """;
+        SELECT LAST_INSERT_ID();
+        """;
 
             using var comando = new MySqlCommand(sql, conexao);
 
@@ -85,8 +89,18 @@ namespace Saborall.DAO
             );
 
             comando.Parameters.AddWithValue(
+                "@produto",
+                venda.IdProduto
+            );
+
+            comando.Parameters.AddWithValue(
                 "@vendedor",
                 venda.IdVendedor
+            );
+
+            comando.Parameters.AddWithValue(
+                "@quantidade",
+                venda.Quantidade
             );
 
             comando.Parameters.AddWithValue(
@@ -103,7 +117,6 @@ namespace Saborall.DAO
                 comando.ExecuteScalar()
             );
         }
-
 
         // =========================================================
         // ATUALIZAR VENDA

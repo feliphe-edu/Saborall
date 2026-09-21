@@ -34,10 +34,12 @@
         <h1>Registro de Vendas</h1>
 
         <!-- FORMULÁRIO DE NOVA VENDA -->
+
         <div class="formulario-venda">
 
             <h2>Nova Venda</h2>
 
+            <!-- PRODUTO -->
             <div>
                 <label>Produto:</label>
 
@@ -57,17 +59,20 @@
                 </select>
             </div>
 
-
+            <!-- QUANTIDADE -->
             <div>
+
                 <label>Quantidade:</label>
 
                 <input type="number"
                        min="1"
                        @bind="quantidade" />
+
             </div>
 
-
+            <!-- VENDEDOR -->
             <div>
+
                 <label>Vendedor:</label>
 
                 <select @bind="vendedorSelecionado">
@@ -84,10 +89,12 @@
                     }
 
                 </select>
+
             </div>
 
-
+            <!-- FORMA DE PAGAMENTO -->
             <div>
+
                 <label>Forma de pagamento:</label>
 
                 <select @bind="formaPagamento">
@@ -97,29 +104,31 @@
                     <option value="Dinheiro">Dinheiro</option>
 
                 </select>
+
             </div>
 
-
+            <!-- TOTAL -->
             <div>
+
                 <h3>
                     Total:
                     R$ @TotalVenda.ToString("F2")
                 </h3>
+
             </div>
 
-
+            <!-- BOTÃO -->
             <button @onclick="RegistrarVenda">
                 Registrar venda
             </button>
 
-
+            <!-- MENSAGEM -->
             @if (!string.IsNullOrWhiteSpace(Mensagem))
             {
                 <p>@Mensagem</p>
             }
 
         </div>
-
 
         <!-- LISTA DE VENDAS -->
         @if (vendas == null)
@@ -135,6 +144,7 @@
             <table>
 
                 <thead>
+
                     <tr>
                         <th>Data</th>
                         <th>Produto</th>
@@ -143,6 +153,7 @@
                         <th>Forma de Pagamento</th>
                         <th>Valor</th>
                     </tr>
+
                 </thead>
 
                 <tbody>
@@ -200,7 +211,6 @@
 
 </div>
 
-
 @code {
 
     private List<Venda> vendas = new();
@@ -215,24 +225,20 @@
 
     private string Mensagem = "";
 
-
     private Produto? ProdutoSelecionado =>
         produtos.FirstOrDefault(
             p => p.IdProduto == produtoSelecionado
         );
-
 
     private decimal TotalVenda =>
         ProdutoSelecionado != null
             ? ProdutoSelecionado.Preco * quantidade
             : 0;
 
-
     protected override void OnInitialized()
     {
         CarregarDados();
     }
-
 
     private void CarregarDados()
     {
@@ -241,27 +247,43 @@
         vendedores = VendedorDAO.Listar();
     }
 
-
     private void RegistrarVenda()
     {
+        Mensagem = "";
+
+        // Verifica produto
         if (produtoSelecionado <= 0)
         {
             Mensagem = "Selecione um produto.";
             return;
         }
 
+        // Verifica vendedor
         if (vendedorSelecionado <= 0)
         {
             Mensagem = "Selecione um vendedor.";
             return;
         }
 
+        // Verifica quantidade
         if (quantidade <= 0)
         {
             Mensagem = "Digite uma quantidade válida.";
             return;
         }
 
+        // Verifica se o produto realmente existe
+        var produto = produtos.FirstOrDefault(
+            p => p.IdProduto == produtoSelecionado
+        );
+
+        if (produto == null)
+        {
+            Mensagem = "Produto não encontrado.";
+            return;
+        }
+
+        // Verifica estoque
         var estoqueAtual = EstoqueDAO.BuscarPorProduto(produtoSelecionado);
 
         if (estoqueAtual == null)
@@ -279,27 +301,41 @@
 
         try
         {
+            // CRIA A VENDA
             var venda = new Venda
             {
                 DataVenda = DateTime.Now,
+
+                // CORREÇÃO PRINCIPAL
+                IdProduto = produtoSelecionado,
+
                 IdVendedor = vendedorSelecionado,
+
+                // CORREÇÃO PRINCIPAL
+                Quantidade = quantidade,
+
                 ValorTotal = TotalVenda,
+
                 FormaPagamento = formaPagamento
             };
 
+            // Salva a venda e pega o ID gerado
             int idVenda = VendaDAO.InserirVenda(venda);
 
+            // Cria o item da venda
             var item = new ItemVenda
             {
                 IdVenda = idVenda,
                 IdProduto = produtoSelecionado,
                 Quantidade = quantidade,
-                PrecoUnitario = ProdutoSelecionado!.Preco,
+                PrecoUnitario = produto.Preco,
                 Subtotal = TotalVenda
             };
 
+            // Salva o item
             VendaDAO.InserirItem(item);
 
+            // Baixa o estoque
             bool estoqueBaixado = EstoqueDAO.BaixarEstoque(
                 produtoSelecionado,
                 quantidade
@@ -311,10 +347,14 @@
                 return;
             }
 
-            Mensagem = "Venda registrada e estoque atualizado com sucesso!";
+            // Sucesso
+            Mensagem =
+                "Venda registrada e estoque atualizado com sucesso!";
 
+            // Recarrega os dados
             CarregarDados();
 
+            // Limpa o formulário
             produtoSelecionado = 0;
             vendedorSelecionado = 0;
             quantidade = 1;
@@ -322,7 +362,9 @@
         }
         catch (Exception ex)
         {
-            Mensagem = "Erro ao registrar venda: " + ex.Message;
+            Mensagem =
+                "Erro ao registrar venda: " + ex.Message;
         }
     }
+
 }
