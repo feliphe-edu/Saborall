@@ -1,8 +1,13 @@
 ﻿@page "/"
 @rendermode InteractiveServer
-@inject NavigationManager Navigation
 
-<PageTitle>Home</PageTitle>
+@using Saborall.DAO
+@using Saborall.Models
+
+@inject NavigationManager Navigation
+@inject UsuarioDAO UsuarioDAO
+
+<PageTitle>Login - Saborall</PageTitle>
 
 <div class="container-home">
 
@@ -12,46 +17,73 @@
 
     <div class="card-login">
 
-        <h2>Criar uma conta</h2>
+        <h2>Entrar na conta</h2>
 
         <p class="subtitulo">
-            Insira seu e-mail para se cadastrar neste aplicativo
+            Entre com seu e-mail e senha para acessar o Saborall
         </p>
 
-        <input type="email"
-               placeholder="email@dominio.com"
-               class="campo-email"
-               @bind="Email" />
+        <!-- E-MAIL -->
+        <div class="campo">
+            <label for="email">E-mail</label>
 
+            <input id="email"
+                   type="email"
+                   placeholder="email@dominio.com"
+                   class="campo-email"
+                   @bind="Email" />
+        </div>
+
+        <!-- SENHA -->
+        <div class="campo">
+            <label for="senha">Senha</label>
+
+            <input id="senha"
+                   type="password"
+                   placeholder="Digite sua senha"
+                   class="campo-email"
+                   @bind="Senha" />
+        </div>
+
+        <!-- BOTÃO DE LOGIN -->
         <button class="btn-continuar"
-                @onclick="IrParaCriarSenha">
-            Continuar
+                @onclick="Entrar">
+            Entrar
         </button>
+
+        <!-- MENSAGEM -->
+        @if (!string.IsNullOrWhiteSpace(Mensagem))
+        {
+            <p class="mensagem">@Mensagem</p>
+        }
 
         <p class="ou">OU</p>
 
+        <!-- GOOGLE -->
         <button class="btn-google">
             Continuar com o Google
         </button>
 
+        <!-- APPLE -->
         <button class="btn-apple">
             Continuar com a Apple
         </button>
 
         <p class="termos">
-            Ao clicar em continuar, você concorda com os nossos
+            Ao entrar ou criar uma conta, você concorda com os nossos
             Termos de Serviço e com a Política de Privacidade.
         </p>
 
+        <!-- CRIAR CONTA -->
         <div class="login-area">
 
             <p class="ja-tem-conta">
-                Já possui uma conta?
+                Ainda não possui uma conta?
             </p>
 
             <button class="btn-login"
-                    @onclick="IrParaLogin">
-                Entrar na conta
+                    @onclick="IrParaCriarConta">
+                Criar uma conta
             </button>
 
         </div>
@@ -63,20 +95,68 @@
 @code {
 
     private string Email = "";
+    private string Senha = "";
+    private string Mensagem = "";
 
-    private void IrParaCriarSenha()
+    private void Entrar()
     {
-        if (string.IsNullOrWhiteSpace(Email))
-            return;
+        Mensagem = "";
 
-        Navigation.NavigateTo(
-            $"/Criarsenha?email={Uri.EscapeDataString(Email)}"
-        );
+        // Verifica se o e-mail foi preenchido
+        if (string.IsNullOrWhiteSpace(Email))
+        {
+            Mensagem = "Digite seu e-mail.";
+            return;
+        }
+
+        // Verifica se a senha foi preenchida
+        if (string.IsNullOrWhiteSpace(Senha))
+        {
+            Mensagem = "Digite sua senha.";
+            return;
+        }
+
+        try
+        {
+            // Procura o usuário no banco de dados
+            var usuario = UsuarioDAO.BuscarPorEmail(Email.Trim());
+
+            // E-mail não encontrado
+            if (usuario == null)
+            {
+                Mensagem = "E-mail não cadastrado.";
+                return;
+            }
+
+            // Senha incorreta
+            if (usuario.Senha != Senha)
+            {
+                Mensagem = "Senha incorreta.";
+                return;
+            }
+
+            // Login realizado com sucesso
+            Navigation.NavigateTo("/Pagina_inicial");
+        }
+        catch (Exception ex)
+        {
+            Mensagem = "Erro ao realizar login: " + ex.Message;
+        }
     }
 
-    private void IrParaLogin()
+    private void IrParaCriarConta()
     {
-        Navigation.NavigateTo("/login");
+        // Para criar a conta, o usuário precisa informar o e-mail
+        if (string.IsNullOrWhiteSpace(Email))
+        {
+            Mensagem = "Digite seu e-mail para criar uma conta.";
+            return;
+        }
+
+        // Envia o e-mail para a página de criação de senha
+        Navigation.NavigateTo(
+            $"/Criarsenha?email={Uri.EscapeDataString(Email.Trim())}"
+        );
     }
 
 }

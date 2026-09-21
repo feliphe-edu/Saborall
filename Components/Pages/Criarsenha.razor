@@ -15,32 +15,67 @@
              alt="Logo Saborall"
              class="logo" />
 
-        <h1>Criar uma senha</h1>
+        <h1>Criar uma conta</h1>
 
         <p class="descricao">
-            Crie uma senha segura para proteger sua conta
+            Crie uma senha para proteger sua conta
         </p>
 
-        <input type="password"
-               placeholder="Digite sua senha"
-               @bind="Senha" />
+        <!-- E-MAIL -->
+        <div class="campo">
 
-        <input type="password"
-               placeholder="Confirme sua senha"
-               @bind="ConfirmarSenha" />
+            <label for="email">E-mail</label>
 
+            <input id="email"
+                   type="email"
+                   placeholder="Digite seu e-mail"
+                   @bind="Email" />
+
+        </div>
+
+        <!-- SENHA -->
+        <div class="campo">
+
+            <label for="senha">Senha</label>
+
+            <input id="senha"
+                   type="password"
+                   placeholder="Digite sua senha"
+                   @bind="Senha" />
+
+        </div>
+
+        <!-- CONFIRMAR SENHA -->
+        <div class="campo">
+
+            <label for="confirmarSenha">Confirmar senha</label>
+
+            <input id="confirmarSenha"
+                   type="password"
+                   placeholder="Digite sua senha novamente"
+                   @bind="ConfirmarSenha" />
+
+        </div>
+
+        <!-- BOTÃO -->
         <button @onclick="Continuar">
-            Continuar
+            Criar conta
         </button>
 
         <p class="senha-info">
             A senha deve conter pelo menos 8 caracteres.
         </p>
 
+        <!-- MENSAGEM -->
         @if (!string.IsNullOrWhiteSpace(Mensagem))
         {
             <p class="mensagem">@Mensagem</p>
         }
+
+        <!-- VOLTAR -->
+        <button @onclick="VoltarParaLogin">
+            Voltar para o login
+        </button>
 
     </div>
 
@@ -57,18 +92,30 @@
 
     private void Continuar()
     {
+        Mensagem = "";
+
+        // Verifica se o e-mail foi informado
         if (string.IsNullOrWhiteSpace(Email))
         {
             Mensagem = "E-mail não informado.";
             return;
         }
 
+        // Verifica a senha
+        if (string.IsNullOrWhiteSpace(Senha))
+        {
+            Mensagem = "Digite uma senha.";
+            return;
+        }
+
+        // Verifica quantidade de caracteres
         if (Senha.Length < 8)
         {
             Mensagem = "A senha deve conter pelo menos 8 caracteres.";
             return;
         }
 
+        // Verifica confirmação
         if (Senha != ConfirmarSenha)
         {
             Mensagem = "As senhas não coincidem.";
@@ -77,7 +124,8 @@
 
         try
         {
-            var usuarioExistente = UsuarioDAO.BuscarPorEmail(Email);
+            // Verifica se o e-mail já está cadastrado
+            var usuarioExistente = UsuarioDAO.BuscarPorEmail(Email.Trim());
 
             if (usuarioExistente != null)
             {
@@ -85,22 +133,28 @@
                 return;
             }
 
+            // Cria o novo usuário
             var usuario = new Usuario
             {
-                Email = Email,
+                Email = Email.Trim(),
                 Senha = Senha
             };
 
+            // Salva no banco
             UsuarioDAO.Inserir(usuario);
 
-            Mensagem = "Conta criada com sucesso!";
-
+            // Vai para a página principal
             Navigation.NavigateTo("/Pagina_inicial");
         }
         catch (Exception ex)
         {
             Mensagem = "Erro ao criar conta: " + ex.Message;
         }
+    }
+
+    private void VoltarParaLogin()
+    {
+        Navigation.NavigateTo("/");
     }
 
 }
