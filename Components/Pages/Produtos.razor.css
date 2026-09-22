@@ -28,6 +28,7 @@
     color: black;
     padding: 12px;
     border-radius: 10px;
+    transition: 0.2s;
 }
 
     .sidebar a:hover,
@@ -44,6 +45,78 @@
     min-height: 100vh;
 }
 
+
+/* FORMULÁRIO */
+
+.formulario-produto {
+    background: white;
+    padding: 20px;
+    border-radius: 18px;
+    margin-bottom: 30px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, .08);
+}
+
+    .formulario-produto h2 {
+        margin-top: 0;
+    }
+
+.campos-produto {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+    .campos-produto input,
+    .campos-produto select {
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        font-size: 14px;
+    }
+
+
+/* BOTÕES DO FORMULÁRIO */
+
+.botao-cadastrar,
+.botao-salvar,
+.botao-cancelar {
+    margin-top: 12px;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.2s;
+}
+
+.botao-cadastrar,
+.botao-salvar {
+    background: #8fd3e8;
+}
+
+    .botao-cadastrar:hover,
+    .botao-salvar:hover {
+        background: #74c4dd;
+        transform: translateY(-1px);
+    }
+
+.botao-cancelar {
+    background: #ddd;
+    margin-left: 8px;
+}
+
+    .botao-cancelar:hover {
+        background: #ccc;
+    }
+
+.mensagem {
+    margin-top: 15px;
+    font-weight: bold;
+}
+
+
+/* CARDS */
+
 .grid-produtos {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -55,8 +128,15 @@
     border-radius: 20px;
     overflow: hidden;
     text-align: center;
-    box-shadow: 0 3px 10px rgba(0,0,0,.1);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, .1);
+    transition: 0.2s;
+    padding-bottom: 15px;
 }
+
+    .produto-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, .15);
+    }
 
     .produto-card img {
         width: 100%;
@@ -71,5 +151,87 @@
     .produto-card p {
         color: #28a745;
         font-weight: bold;
-        margin-bottom: 20px;
+        margin-bottom: 12px;
+    }
+
+
+/* BOTÕES DOS CARDS */
+
+.botoes-card {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.botao-editar,
+.botao-excluir {
+    padding: 8px 15px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.2s;
+}
+
+.botao-editar {
+    background: #8fd3e8;
+}
+
+    .botao-editar:hover {
+        background: #74c4dd;
+        transform: translateY(-1px);
+    }
+
+.botao-excluir {
+    background: #f08aa8;
+}
+
+    .botao-excluir:hover {
+        background: #e57597;
+        transform: translateY(-1px);
+    }
+
+
+/* CONFIRMAÇÃO */
+
+.confirmacao-exclusao {
+    margin: 10px 15px 0;
+    padding: 12px;
+    background: #f7cfe0;
+    border-radius: 10px;
+    font-weight: bold;
+}
+
+.botoes-confirmacao {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.botao-excluir-confirmar,
+.botao-cancelar-exclusao {
+    padding: 7px 12px;
+    border: none;
+    border-radius: 7px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.botao-excluir-confirmar {
+    background: #e05278;
+    color: white;
+}
+
+    .botao-excluir-confirmar:hover {
+        background: #cf3d64;
+    }
+
+.botao-cancelar-exclusao {
+    background: white;
+}
+
+    .botao-cancelar-exclusao:hover {
+        background: #eee;
     }

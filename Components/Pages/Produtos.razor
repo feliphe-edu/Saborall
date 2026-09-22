@@ -29,15 +29,15 @@
 
     </div>
 
+
     <div class="conteudo">
 
         <div class="pagina-produtos">
 
             <h1>Produtos da Sorveteria</h1>
 
-            <!-- ========================================= -->
-            <!-- FORMULÁRIO DE PRODUTO                     -->
-            <!-- ========================================= -->
+
+            <!-- FORMULÁRIO -->
 
             <div class="formulario-produto">
 
@@ -45,51 +45,64 @@
                     @(modoEdicao ? "Editar Produto" : "Cadastrar Produto")
                 </h2>
 
-                <input type="text"
-                       placeholder="Nome do produto"
-                       @bind="novoProduto.NomeProduto" />
+                <div class="campos-produto">
 
-                <input type="text"
-                       placeholder="Categoria"
-                       @bind="novoProduto.Categoria" />
+                    <input type="text"
+                           placeholder="Nome do produto"
+                           @bind="novoProduto.NomeProduto" />
 
-                <input type="number"
-                       step="0.01"
-                       min="0"
-                       placeholder="Preço"
-                       @bind="novoProduto.Preco" />
+                    <input type="text"
+                           placeholder="Categoria"
+                           @bind="novoProduto.Categoria" />
 
-                <select @bind="novoProduto.IdFornecedor">
+                    <input type="number"
+                           step="0.01"
+                           min="0"
+                           placeholder="Preço"
+                           @bind="novoProduto.Preco" />
 
-                    <option value="">
-                        Selecione o fornecedor
-                    </option>
+                    <select @bind="novoProduto.IdFornecedor">
 
-                    @foreach (var fornecedor in fornecedores)
-                    {
-                        <option value="@fornecedor.IdFornecedor">
-                            @fornecedor.NomeFantasia
+                        <option value="">
+                            Selecione o fornecedor
                         </option>
-                    }
 
-                </select>
+                        @foreach (var fornecedor in fornecedores)
+                        {
+                            <option value="@fornecedor.IdFornecedor">
+                                @fornecedor.NomeFantasia
+                            </option>
+                        }
+
+                    </select>
+
+                </div>
+
 
                 @if (modoEdicao)
                 {
-                    <button @onclick="SalvarEdicao">
-                        Salvar alteração
-                    </button>
+                    <div class="botoes-formulario">
 
-                    <button @onclick="CancelarEdicao">
-                        Cancelar
-                    </button>
+                        <button class="botao-salvar"
+                                @onclick="SalvarEdicao">
+                            Salvar alteração
+                        </button>
+
+                        <button class="botao-cancelar"
+                                @onclick="CancelarEdicao">
+                            Cancelar
+                        </button>
+
+                    </div>
                 }
                 else
                 {
-                    <button @onclick="CadastrarProduto">
+                    <button class="botao-cadastrar"
+                            @onclick="CadastrarProduto">
                         Cadastrar produto
                     </button>
                 }
+
 
                 @if (!string.IsNullOrWhiteSpace(Mensagem))
                 {
@@ -101,9 +114,7 @@
             </div>
 
 
-            <!-- ========================================= -->
-            <!-- LISTA DE PRODUTOS                         -->
-            <!-- ========================================= -->
+            <!-- LISTA DE PRODUTOS -->
             @if (produtos == null)
             {
                 <p>Carregando produtos...</p>
@@ -123,17 +134,21 @@
                             <img src="@imagens[produto.NomeProduto.Trim().ToLower()]"
                                  alt="@produto.NomeProduto" />
 
+
                             <h3>
                                 @produto.NomeProduto
                             </h3>
+
 
                             <p>
                                 @produto.Categoria
                             </p>
 
+
                             <p>
                                 R$ @produto.Preco.ToString("F2")
                             </p>
+
 
                             @if (produto.IdFornecedor.HasValue)
                             {
@@ -154,13 +169,45 @@
                                 </p>
                             }
 
-                            <button @onclick="() => EditarProduto(produto)">
-                                Editar
-                            </button>
 
-                            <button @onclick="() => ExcluirProduto(produto.IdProduto)">
-                                Excluir
-                            </button>
+                            @if (produtoParaExcluir == produto.IdProduto)
+                            {
+                                <div class="confirmacao-exclusao">
+
+                                    <span>Excluir este produto?</span>
+
+                                    <div class="botoes-confirmacao">
+
+                                        <button class="botao-excluir-confirmar"
+                                                @onclick="ConfirmarExclusao">
+                                            Sim, excluir
+                                        </button>
+
+                                        <button class="botao-cancelar-exclusao"
+                                                @onclick="CancelarExclusao">
+                                            Cancelar
+                                        </button>
+
+                                    </div>
+
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="botoes-card">
+
+                                    <button class="botao-editar"
+                                            @onclick="() => EditarProduto(produto)">
+                                        Editar
+                                    </button>
+
+                                    <button class="botao-excluir"
+                                            @onclick="() => ExcluirProduto(produto.IdProduto)">
+                                        Excluir
+                                    </button>
+
+                                </div>
+                            }
 
                         </div>
                     }
@@ -212,6 +259,11 @@
     private string Mensagem = "";
 
 
+    // CONTROLA EXCLUSÃO
+
+    private int produtoParaExcluir = 0;
+
+
     // CARREGAMENTO INICIAL
 
     protected override void OnInitialized()
@@ -220,12 +272,11 @@
     }
 
 
-    // CARREGAR PRODUTOS E FORNECEDORES
+    // CARREGAR DADOS
 
     private void CarregarDados()
     {
         produtos = ProdutoDAO.Listar();
-
         fornecedores = FornecedorDAO.Listar();
     }
 
@@ -353,22 +404,44 @@
     }
 
 
-    // EXCLUIR PRODUTO
+    // MOSTRAR CONFIRMAÇÃO DE EXCLUSÃO
 
     private void ExcluirProduto(int id)
     {
+        Mensagem = "";
+
+        produtoParaExcluir = id;
+    }
+
+
+    // CONFIRMAR EXCLUSÃO
+
+    private void ConfirmarExclusao()
+    {
         try
         {
-            ProdutoDAO.Excluir(id);
+            ProdutoDAO.Excluir(produtoParaExcluir);
 
             Mensagem = "Produto excluído com sucesso!";
+
+            produtoParaExcluir = 0;
 
             CarregarDados();
         }
         catch (Exception ex)
         {
             Mensagem = "Não foi possível excluir o produto: " + ex.Message;
+
+            produtoParaExcluir = 0;
         }
+    }
+
+
+    // CANCELAR EXCLUSÃO
+
+    private void CancelarExclusao()
+    {
+        produtoParaExcluir = 0;
     }
 
 }
