@@ -39,6 +39,7 @@ namespace Saborall.DAO
                     IdVenda = reader.GetInt32("id_venda"),
                     DataVenda = reader.GetDateTime("data_venda"),
                     IdVendedor = reader.GetInt32("id_vendedor"),
+                    Quantidade = reader.GetInt32("quantidade"),
                     ValorTotal = reader.GetDecimal("valor_total"),
                     FormaPagamento = reader.GetString("forma_pagamento")
                 });
@@ -59,6 +60,7 @@ namespace Saborall.DAO
                 INSERT INTO Vendas
                 (
                     data_venda,
+                    id_produto,
                     id_vendedor,
                     quantidade,
                     valor_total,
@@ -67,6 +69,7 @@ namespace Saborall.DAO
                 VALUES
                 (
                     @data,
+                    @produto,
                     @vendedor,
                     @quantidade,
                     @total,
@@ -79,6 +82,7 @@ namespace Saborall.DAO
             using var comando = new MySqlCommand(sql, conexao);
 
             comando.Parameters.AddWithValue("@data", venda.DataVenda);
+            comando.Parameters.AddWithValue("@produto", venda.IdProduto);
             comando.Parameters.AddWithValue("@vendedor", venda.IdVendedor);
             comando.Parameters.AddWithValue("@quantidade", venda.Quantidade);
             comando.Parameters.AddWithValue("@total", venda.ValorTotal);
