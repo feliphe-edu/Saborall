@@ -35,7 +35,6 @@
 
             <h1>Produtos da Sorveteria</h1>
 
-
             <!-- ========================================= -->
             <!-- FORMULÁRIO DE PRODUTO                     -->
             <!-- ========================================= -->
@@ -46,28 +45,20 @@
                     @(modoEdicao ? "Editar Produto" : "Cadastrar Produto")
                 </h2>
 
-
-                <!-- NOME -->
                 <input type="text"
                        placeholder="Nome do produto"
                        @bind="novoProduto.NomeProduto" />
 
-
-                <!-- CATEGORIA -->
                 <input type="text"
                        placeholder="Categoria"
                        @bind="novoProduto.Categoria" />
 
-
-                <!-- PREÇO -->
                 <input type="number"
                        step="0.01"
                        min="0"
                        placeholder="Preço"
                        @bind="novoProduto.Preco" />
 
-
-                <!-- FORNECEDOR -->
                 <select @bind="novoProduto.IdFornecedor">
 
                     <option value="">
@@ -83,8 +74,6 @@
 
                 </select>
 
-
-                <!-- BOTÕES -->
                 @if (modoEdicao)
                 {
                     <button @onclick="SalvarEdicao">
@@ -102,8 +91,6 @@
                     </button>
                 }
 
-
-                <!-- MENSAGEM -->
                 @if (!string.IsNullOrWhiteSpace(Mensagem))
                 {
                     <p class="mensagem">
@@ -133,24 +120,20 @@
                     {
                         <div class="produto-card">
 
-                            <img src="@ObterImagem(produto.NomeProduto)"
+                            <img src="@imagens[produto.NomeProduto.Trim().ToLower()]"
                                  alt="@produto.NomeProduto" />
-
 
                             <h3>
                                 @produto.NomeProduto
                             </h3>
 
-
                             <p>
                                 @produto.Categoria
                             </p>
 
-
                             <p>
                                 R$ @produto.Preco.ToString("F2")
                             </p>
-
 
                             @if (produto.IdFornecedor.HasValue)
                             {
@@ -171,14 +154,10 @@
                                 </p>
                             }
 
-
-                            <!-- BOTÃO EDITAR -->
                             <button @onclick="() => EditarProduto(produto)">
                                 Editar
                             </button>
 
-
-                            <!-- BOTÃO EXCLUIR -->
                             <button @onclick="() => ExcluirProduto(produto.IdProduto)">
                                 Excluir
                             </button>
@@ -198,39 +177,42 @@
 
 @code {
 
-    // =========================================
+    // IMAGENS DOS PRODUTOS
+
+    private Dictionary<string, string> imagens = new()
+    {
+        { "chocolate supremo", "/Imagens/ChocolateSupremo.jpg" },
+        { "morango cremoso", "/Imagens/MorangoCremoso.webp" },
+        { "ninho com nutella", "/Imagens/Ninho com Nutella.jfif" },
+        { "sorvete de jabuticaba", "/Imagens/Sorvete de Jabuticaba.png" },
+        { "sorvete de queijo", "/Imagens/Sorvete de Queijo.png" },
+        { "sorvete de pitaya", "/Imagens/sorvete-de-pitaya.jpg" }
+    };
+
+
     // LISTAS
-    // =========================================
 
     private List<Produto> produtos = new();
 
     private List<Fornecedor> fornecedores = new();
 
 
-    // =========================================
     // PRODUTO DO FORMULÁRIO
-    // =========================================
 
     private Produto novoProduto = new();
 
 
-    // =========================================
     // CONTROLA SE ESTÁ EDITANDO
-    // =========================================
 
     private bool modoEdicao = false;
 
 
-    // =========================================
-    // MENSAGEM PARA O USUÁRIO
-    // =========================================
+    // MENSAGEM
 
     private string Mensagem = "";
 
 
-    // =========================================
     // CARREGAMENTO INICIAL
-    // =========================================
 
     protected override void OnInitialized()
     {
@@ -238,9 +220,7 @@
     }
 
 
-    // =========================================
     // CARREGAR PRODUTOS E FORNECEDORES
-    // =========================================
 
     private void CarregarDados()
     {
@@ -250,42 +230,32 @@
     }
 
 
-    // =========================================
     // CADASTRAR PRODUTO
-    // =========================================
 
     private void CadastrarProduto()
     {
         Mensagem = "";
 
-
-        // Verifica nome
         if (string.IsNullOrWhiteSpace(novoProduto.NomeProduto))
         {
             Mensagem = "Digite o nome do produto.";
             return;
         }
 
-
-        // Verifica categoria
         if (string.IsNullOrWhiteSpace(novoProduto.Categoria))
         {
             Mensagem = "Digite a categoria do produto.";
             return;
         }
 
-
-        // Verifica preço
         if (novoProduto.Preco <= 0)
         {
             Mensagem = "Digite um preço válido.";
             return;
         }
 
-
         try
         {
-            // Salva o produto no banco
             int idProduto = ProdutoDAO.Inserir(novoProduto);
 
             var estoque = new EstoqueModel
@@ -298,182 +268,107 @@
 
             Mensagem = "Produto cadastrado com sucesso!";
 
-
-            // Limpa os campos
             novoProduto = new Produto();
 
-
-            // Atualiza a lista
             CarregarDados();
         }
         catch (Exception ex)
         {
-            Mensagem =
-                "Erro ao cadastrar produto: " + ex.Message;
+            Mensagem = "Erro ao cadastrar produto: " + ex.Message;
         }
     }
 
 
-    // =========================================
-    // PREPARAR PRODUTO PARA EDIÇÃO
-    // =========================================
+    // EDITAR PRODUTO
 
     private void EditarProduto(Produto produto)
     {
-        // Cria uma cópia do produto
-        // para não alterar a lista imediatamente.
-
         novoProduto = new Produto
         {
             IdProduto = produto.IdProduto,
-
             NomeProduto = produto.NomeProduto,
-
             Categoria = produto.Categoria,
-
             Preco = produto.Preco,
-
             IdFornecedor = produto.IdFornecedor
         };
 
-
-        // Ativa modo de edição
         modoEdicao = true;
 
-
-        // Limpa mensagem anterior
         Mensagem = "";
     }
 
 
-    // =========================================
     // SALVAR ALTERAÇÃO
-    // =========================================
 
     private void SalvarEdicao()
     {
         Mensagem = "";
 
-
-        // Verifica nome
         if (string.IsNullOrWhiteSpace(novoProduto.NomeProduto))
         {
             Mensagem = "Digite o nome do produto.";
             return;
         }
 
-
-        // Verifica categoria
         if (string.IsNullOrWhiteSpace(novoProduto.Categoria))
         {
             Mensagem = "Digite a categoria do produto.";
             return;
         }
 
-
-        // Verifica preço
         if (novoProduto.Preco <= 0)
         {
             Mensagem = "Digite um preço válido.";
             return;
         }
 
-
         try
         {
-            // Atualiza no MySQL
             ProdutoDAO.Atualizar(novoProduto);
 
-
-            // Mensagem
             Mensagem = "Produto atualizado com sucesso!";
 
-
-            // Limpa formulário
             novoProduto = new Produto();
 
-
-            // Sai do modo de edição
             modoEdicao = false;
 
-
-            // Atualiza a lista
             CarregarDados();
         }
         catch (Exception ex)
         {
-            Mensagem =
-                "Erro ao atualizar produto: " + ex.Message;
+            Mensagem = "Erro ao atualizar produto: " + ex.Message;
         }
     }
 
 
-    // =========================================
     // CANCELAR EDIÇÃO
-    // =========================================
 
     private void CancelarEdicao()
     {
-        // Limpa formulário
         novoProduto = new Produto();
 
-
-        // Volta para modo cadastro
         modoEdicao = false;
 
-
-        // Limpa mensagem
         Mensagem = "";
     }
 
 
-    // =========================================
     // EXCLUIR PRODUTO
-    // =========================================
 
     private void ExcluirProduto(int id)
     {
         try
         {
-            // Exclui do banco
             ProdutoDAO.Excluir(id);
 
-
-            // Mensagem
             Mensagem = "Produto excluído com sucesso!";
 
-
-            // Atualiza lista
             CarregarDados();
         }
         catch (Exception ex)
         {
-            Mensagem =
-                "Não foi possível excluir o produto: " + ex.Message;
+            Mensagem = "Não foi possível excluir o produto: " + ex.Message;
         }
-    }
-
-
-    // =========================================
-    // IMAGENS DOS PRODUTOS
-    // =========================================
-
-    private string ObterImagem(string nome)
-    {
-        return nome switch
-        {
-            "Chocolate Supremo" =>
-                "https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=500",
-
-            "Morango Cremoso" =>
-                "https://conteudo.imguol.com.br/70/2015/09/22/sorvete-de-morango-1442958069731_v2_1x1.jpg",
-
-            "Ninho com Nutella" =>
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTMpWXwjW52PRcf7OAQxr9l8v2A5YNaqCxAaEDCmptQIKJy69csnl2E4cc&s=10",
-
-            _ =>
-                "https://images.unsplash.com/photo-1570197788417-0e82375c9371?w=500"
-        };
     }
 
 }
