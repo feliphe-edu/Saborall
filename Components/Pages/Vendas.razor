@@ -13,6 +13,7 @@
 
 <div class="dashboard">
 
+    <!-- SIDEBAR -->
     <div class="sidebar">
 
         <img src="/Imagens/logo_.png"
@@ -29,253 +30,543 @@
 
     </div>
 
+
+    <!-- CONTEÚDO -->
     <div class="conteudo">
 
         <h1>Registro de Vendas</h1>
 
-        <!-- FORMULÁRIO DE NOVA VENDA -->
+
+        <!-- =========================================
+             FORMULÁRIO DE NOVA VENDA
+             ========================================= -->
 
         <div class="formulario-venda">
 
-            <h2>Nova Venda</h2>
+            <div class="titulo-formulario">
 
-            <!-- PRODUTO -->
-            <div>
-                <label>Produto:</label>
+                <div>
+                    <h2>Nova Venda</h2>
 
-                <select @bind="produtoSelecionado">
+                    <p>
+                        Preencha os dados abaixo para registrar uma nova venda.
+                    </p>
+                </div>
 
-                    <option value="0">
-                        Selecione o produto
-                    </option>
+            </div>
 
-                    @foreach (var produto in produtos)
-                    {
-                        <option value="@produto.IdProduto">
-                            @produto.NomeProduto - R$ @produto.Preco.ToString("F2")
+
+            <!-- CAMPOS DA VENDA -->
+
+            <div class="campos-venda">
+
+
+                <!-- PRODUTO -->
+
+                <div class="campo campo-produto">
+
+                    <label for="produto">
+                        Produto
+                    </label>
+
+                    <select id="produto"
+                            @bind="produtoSelecionado">
+
+                        <option value="0">
+                            Selecione o produto
                         </option>
-                    }
 
-                </select>
-            </div>
+                        @foreach (var produto in produtos)
+                        {
+                            <option value="@produto.IdProduto">
 
-            <!-- QUANTIDADE -->
-            <div>
+                                @produto.NomeProduto -
+                                R$ @produto.Preco.ToString("F2")
 
-                <label>Quantidade:</label>
+                            </option>
+                        }
 
-                <input type="number"
-                       min="1"
-                       @bind="quantidade" />
+                    </select>
 
-            </div>
+                </div>
 
-            <!-- VENDEDOR -->
-            <div>
 
-                <label>Vendedor:</label>
+                <!-- QUANTIDADE -->
 
-                <select @bind="vendedorSelecionado">
+                <div class="campo campo-quantidade">
 
-                    <option value="0">
-                        Selecione o vendedor
-                    </option>
+                    <label for="quantidade">
+                        Quantidade
+                    </label>
 
-                    @foreach (var vendedor in vendedores)
-                    {
-                        <option value="@vendedor.IdVendedor">
-                            @vendedor.Nome
+                    <input id="quantidade"
+                           type="number"
+                           min="1"
+                           @bind="quantidade" />
+
+                </div>
+
+
+                <!-- VENDEDOR -->
+
+                <div class="campo">
+
+                    <label for="vendedor">
+                        Vendedor
+                    </label>
+
+                    <select id="vendedor"
+                            @bind="vendedorSelecionado">
+
+                        <option value="0">
+                            Selecione o vendedor
                         </option>
-                    }
 
-                </select>
+                        @foreach (var vendedor in vendedores)
+                        {
+                            <option value="@vendedor.IdVendedor">
+                                @vendedor.Nome
+                            </option>
+                        }
+
+                    </select>
+
+                </div>
+
+
+                <!-- FORMA DE PAGAMENTO -->
+
+                <div class="campo">
+
+                    <label for="pagamento">
+                        Forma de pagamento
+                    </label>
+
+                    <select id="pagamento"
+                            @bind="formaPagamento">
+
+                        <option value="PIX">
+                            PIX
+                        </option>
+
+                        <option value="Cartão">
+                            Cartão
+                        </option>
+
+                        <option value="Dinheiro">
+                            Dinheiro
+                        </option>
+
+                    </select>
+
+                </div>
 
             </div>
 
-            <!-- FORMA DE PAGAMENTO -->
-            <div>
 
-                <label>Forma de pagamento:</label>
+            <!-- =========================================
+                 RESUMO DA VENDA
+                 ========================================= -->
 
-                <select @bind="formaPagamento">
+            <div class="resumo-venda">
 
-                    <option value="PIX">PIX</option>
-                    <option value="Cartão">Cartão</option>
-                    <option value="Dinheiro">Dinheiro</option>
 
-                </select>
+                <!-- PRODUTO SELECIONADO -->
+
+                <div class="resumo-info">
+
+                    <span>
+                        Produto selecionado
+                    </span>
+
+                    <strong>
+                        @(ProdutoSelecionado?.NomeProduto
+                            ?? "Nenhum produto selecionado")
+                    </strong>
+
+                </div>
+
+
+                <!-- QUANTIDADE -->
+
+                <div class="resumo-info">
+
+                    <span>
+                        Quantidade
+                    </span>
+
+                    <strong>
+                        @quantidade
+                    </strong>
+
+                </div>
+
+
+                <!-- PREÇO UNITÁRIO -->
+
+                <div class="resumo-info">
+
+                    <span>
+                        Preço unitário
+                    </span>
+
+                    <strong>
+                        R$ @(ProdutoSelecionado?.Preco.ToString("F2") ?? "0,00")
+                    </strong>
+
+                </div>
+
+
+                <!-- TOTAL -->
+
+                <div class="resumo-total">
+
+                    <span>
+                        Total da venda
+                    </span>
+
+                    <strong>
+                        R$ @TotalVenda.ToString("F2")
+                    </strong>
+
+                </div>
 
             </div>
 
-            <!-- TOTAL -->
-            <div>
 
-                <h3>
-                    Total:
-                    R$ @TotalVenda.ToString("F2")
-                </h3>
+            <!-- =========================================
+                 BOTÃO REGISTRAR VENDA
+                 ========================================= -->
 
-            </div>
+            <button class="botao-registrar"
+                    @onclick="RegistrarVenda">
 
-            <!-- BOTÃO -->
-            <button @onclick="RegistrarVenda">
-                Registrar venda
+                <span class="icone-botao">
+                    ✓
+                </span>
+
+                <span>
+                    Registrar venda
+                </span>
+
             </button>
 
-            <!-- MENSAGEM -->
+
+            <!-- =========================================
+                 MENSAGEM
+                 ========================================= -->
             @if (!string.IsNullOrWhiteSpace(Mensagem))
             {
-                <p>@Mensagem</p>
+                <div class="mensagem-venda @(Mensagem.Contains("sucesso") ? "mensagem-sucesso" : "mensagem-erro")">
+
+                    @Mensagem
+
+                </div>
             }
 
         </div>
 
-        <!-- LISTA DE VENDAS -->
-        @if (vendas == null)
-        {
-            <p>Carregando vendas...</p>
-        }
-        else if (vendas.Count == 0)
-        {
-            <p>Nenhuma venda registrada.</p>
-        }
-        else
-        {
-            <table>
 
-                <thead>
+        <!-- =========================================
+             LISTA DE VENDAS
+             ========================================= -->
 
-                    <tr>
-                        <th>Data</th>
-                        <th>Produto</th>
-                        <th>Quantidade</th>
-                        <th>Vendedor</th>
-                        <th>Forma de Pagamento</th>
-                        <th>Valor</th>
-                    </tr>
+        <div class="lista-vendas">
 
-                </thead>
+            <div class="titulo-lista">
 
-                <tbody>
+                <h2>
+                    Vendas registradas
+                </h2>
 
-                    @foreach (var venda in vendas)
-                    {
-                        var itens = VendaDAO.ListarItens(venda.IdVenda);
+                <span>
+                    @vendas.Count venda(s)
+                </span>
 
-                        @foreach (var item in itens)
+            </div>
+
+
+            @if (vendas == null)
+            {
+                <p>
+                    Carregando vendas...
+                </p>
+            }
+
+            else if (vendas.Count == 0)
+            {
+                <p>
+                    Nenhuma venda registrada.
+                </p>
+            }
+
+            else
+            {
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Data
+                            </th>
+
+                            <th>
+                                Produto
+                            </th>
+
+                            <th>
+                                Quantidade
+                            </th>
+
+                            <th>
+                                Vendedor
+                            </th>
+
+                            <th>
+                                Forma de Pagamento
+                            </th>
+
+                            <th>
+                                Valor
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        @foreach (var venda in vendas)
                         {
-                            var produto = produtos.FirstOrDefault(
-                                p => p.IdProduto == item.IdProduto
-                            );
+                            var itens = VendaDAO.ListarItens(venda.IdVenda);
 
-                            var vendedor = vendedores.FirstOrDefault(
-                                v => v.IdVendedor == venda.IdVendedor
-                            );
+                            @foreach (var item in itens)
+                            {
+                                var produto = produtos.FirstOrDefault(
+                                    p => p.IdProduto == item.IdProduto
+                                );
 
-                            <tr>
+                                var vendedor = vendedores.FirstOrDefault(
+                                    v => v.IdVendedor == venda.IdVendedor
+                                );
 
-                                <td>
-                                    @venda.DataVenda.ToString("dd/MM/yyyy")
-                                </td>
 
-                                <td>
-                                    @(produto?.NomeProduto ?? "Produto")
-                                </td>
+                                <tr>
 
-                                <td>
-                                    @item.Quantidade
-                                </td>
+                                    <!-- DATA -->
 
-                                <td>
-                                    @(vendedor?.Nome ?? "Vendedor")
-                                </td>
+                                    <td>
+                                        @venda.DataVenda.ToString("dd/MM/yyyy")
+                                    </td>
 
-                                <td>
-                                    @venda.FormaPagamento
-                                </td>
 
-                                <td>
-                                    R$ @item.Subtotal.ToString("F2")
-                                </td>
+                                    <!-- PRODUTO -->
 
-                            </tr>
+                                    <td>
+
+                                        <div class="produto-tabela">
+
+                                            <span class="produto-nome">
+
+                                                @(produto?.NomeProduto
+                                                    ?? "Produto")
+
+                                            </span>
+
+                                        </div>
+
+                                    </td>
+
+
+                                    <!-- QUANTIDADE -->
+
+                                    <td>
+
+                                        <span class="quantidade-tabela">
+
+                                            @item.Quantidade
+
+                                        </span>
+
+                                    </td>
+
+
+                                    <!-- VENDEDOR -->
+
+                                    <td>
+
+                                        @(vendedor?.Nome
+                                            ?? "Vendedor")
+
+                                    </td>
+
+
+                                    <!-- PAGAMENTO -->
+
+                                    <td>
+
+                                        <span class="pagamento-tabela">
+
+                                            @venda.FormaPagamento
+
+                                        </span>
+
+                                    </td>
+
+
+                                    <!-- VALOR -->
+
+                                    <td>
+
+                                        <strong class="valor-tabela">
+
+                                            R$ @item.Subtotal.ToString("F2")
+
+                                        </strong>
+
+                                    </td>
+
+                                </tr>
+                            }
                         }
-                    }
 
-                </tbody>
+                    </tbody>
 
-            </table>
-        }
+                </table>
+            }
+
+        </div>
 
     </div>
 
 </div>
 
+
 @code {
 
+    // =========================================
+    // LISTAS
+    // =========================================
+
     private List<Venda> vendas = new();
+
     private List<Produto> produtos = new();
+
     private List<Vendedor> vendedores = new();
 
+
+    // =========================================
+    // CAMPOS DO FORMULÁRIO
+    // =========================================
+
     private int produtoSelecionado = 0;
+
     private int vendedorSelecionado = 0;
+
     private int quantidade = 1;
 
     private string formaPagamento = "PIX";
 
     private string Mensagem = "";
 
+
+    // =========================================
+    // PRODUTO SELECIONADO
+    // =========================================
+
     private Produto? ProdutoSelecionado =>
         produtos.FirstOrDefault(
             p => p.IdProduto == produtoSelecionado
         );
+
+
+    // =========================================
+    // TOTAL DA VENDA
+    // =========================================
 
     private decimal TotalVenda =>
         ProdutoSelecionado != null
             ? ProdutoSelecionado.Preco * quantidade
             : 0;
 
+
+    // =========================================
+    // INICIALIZAÇÃO
+    // =========================================
+
     protected override void OnInitialized()
     {
         CarregarDados();
     }
 
+
+    // =========================================
+    // CARREGAR DADOS
+    // =========================================
+
     private void CarregarDados()
     {
         vendas = VendaDAO.Listar();
+
         produtos = ProdutoDAO.Listar();
+
         vendedores = VendedorDAO.Listar();
     }
+
+
+    // =========================================
+    // REGISTRAR VENDA
+    // =========================================
 
     private void RegistrarVenda()
     {
         Mensagem = "";
 
-        // Verifica produto
+
+        // =====================================
+        // VERIFICA PRODUTO
+        // =====================================
+
         if (produtoSelecionado <= 0)
         {
             Mensagem = "Selecione um produto.";
             return;
         }
 
-        // Verifica vendedor
+
+        // =====================================
+        // VERIFICA VENDEDOR
+        // =====================================
+
         if (vendedorSelecionado <= 0)
         {
             Mensagem = "Selecione um vendedor.";
             return;
         }
 
-        // Verifica quantidade
+
+        // =====================================
+        // VERIFICA QUANTIDADE
+        // =====================================
+
         if (quantidade <= 0)
         {
             Mensagem = "Digite uma quantidade válida.";
             return;
         }
 
-        // Verifica se o produto realmente existe
+
+        // =====================================
+        // VERIFICA SE O PRODUTO EXISTE
+        // =====================================
+
         var produto = produtos.FirstOrDefault(
             p => p.IdProduto == produtoSelecionado
         );
+
 
         if (produto == null)
         {
@@ -283,35 +574,52 @@
             return;
         }
 
-        // Verifica estoque
-        var estoqueAtual = EstoqueDAO.BuscarPorProduto(produtoSelecionado);
+
+        // =====================================
+        // VERIFICA ESTOQUE
+        // =====================================
+
+        var estoqueAtual =
+            EstoqueDAO.BuscarPorProduto(produtoSelecionado);
+
 
         if (estoqueAtual == null)
         {
-            Mensagem = "Produto não possui estoque cadastrado.";
+            Mensagem =
+                "Produto não possui estoque cadastrado.";
+
             return;
         }
+
+
+        // =====================================
+        // VERIFICA QUANTIDADE DISPONÍVEL
+        // =====================================
 
         if (estoqueAtual.QuantidadeDisponivel < quantidade)
         {
             Mensagem =
                 $"Estoque insuficiente. Disponível: {estoqueAtual.QuantidadeDisponivel}.";
+
             return;
         }
 
+
         try
         {
+
+            // =================================
             // CRIA A VENDA
+            // =================================
+
             var venda = new Venda
             {
                 DataVenda = DateTime.Now,
 
-                // CORREÇÃO PRINCIPAL
                 IdProduto = produtoSelecionado,
 
                 IdVendedor = vendedorSelecionado,
 
-                // CORREÇÃO PRINCIPAL
                 Quantidade = quantidade,
 
                 ValorTotal = TotalVenda,
@@ -319,47 +627,89 @@
                 FormaPagamento = formaPagamento
             };
 
-            // Salva a venda e pega o ID gerado
-            int idVenda = VendaDAO.InserirVenda(venda);
 
-            // Cria o item da venda
+            // =================================
+            // SALVA A VENDA
+            // =================================
+
+            int idVenda =
+                VendaDAO.InserirVenda(venda);
+
+
+            // =================================
+            // CRIA O ITEM DA VENDA
+            // =================================
+
             var item = new ItemVenda
             {
                 IdVenda = idVenda,
+
                 IdProduto = produtoSelecionado,
+
                 Quantidade = quantidade,
+
                 PrecoUnitario = produto.Preco,
+
                 Subtotal = TotalVenda
             };
 
-            // Salva o item
+
+            // =================================
+            // SALVA O ITEM
+            // =================================
+
             VendaDAO.InserirItem(item);
 
-            // Baixa o estoque
-            bool estoqueBaixado = EstoqueDAO.BaixarEstoque(
-                produtoSelecionado,
-                quantidade
-            );
+
+            // =================================
+            // BAIXA O ESTOQUE
+            // =================================
+
+            bool estoqueBaixado =
+                EstoqueDAO.BaixarEstoque(
+                    produtoSelecionado,
+                    quantidade
+                );
+
 
             if (!estoqueBaixado)
             {
-                Mensagem = "Não foi possível atualizar o estoque.";
+                Mensagem =
+                    "Não foi possível atualizar o estoque.";
+
                 return;
             }
 
-            // Sucesso
+
+            // =================================
+            // SUCESSO
+            // =================================
+
             Mensagem =
                 "Venda registrada e estoque atualizado com sucesso!";
 
-            // Recarrega os dados
+
+            // =================================
+            // RECARREGA OS DADOS
+            // =================================
+
             CarregarDados();
 
-            // Limpa o formulário
+
+            // =================================
+            // LIMPA O FORMULÁRIO
+            // =================================
+
             produtoSelecionado = 0;
+
             vendedorSelecionado = 0;
+
             quantidade = 1;
+
             formaPagamento = "PIX";
+
         }
+
         catch (Exception ex)
         {
             Mensagem =
