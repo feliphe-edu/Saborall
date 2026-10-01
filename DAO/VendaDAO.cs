@@ -60,7 +60,6 @@ namespace Saborall.DAO
                 INSERT INTO Vendas
                 (
                     data_venda,
-                    id_produto,
                     id_vendedor,
                     quantidade,
                     valor_total,
@@ -69,7 +68,6 @@ namespace Saborall.DAO
                 VALUES
                 (
                     @data,
-                    @produto,
                     @vendedor,
                     @quantidade,
                     @total,
@@ -82,7 +80,6 @@ namespace Saborall.DAO
             using var comando = new MySqlCommand(sql, conexao);
 
             comando.Parameters.AddWithValue("@data", venda.DataVenda);
-            comando.Parameters.AddWithValue("@produto", venda.IdProduto);
             comando.Parameters.AddWithValue("@vendedor", venda.IdVendedor);
             comando.Parameters.AddWithValue("@quantidade", venda.Quantidade);
             comando.Parameters.AddWithValue("@total", venda.ValorTotal);
@@ -104,6 +101,7 @@ namespace Saborall.DAO
                 SET
                     data_venda = @data,
                     id_vendedor = @vendedor,
+                    quantidade = @quantidade,
                     valor_total = @total,
                     forma_pagamento = @formaPagamento
                 WHERE id_venda = @id
@@ -113,6 +111,7 @@ namespace Saborall.DAO
 
             comando.Parameters.AddWithValue("@data", venda.DataVenda);
             comando.Parameters.AddWithValue("@vendedor", venda.IdVendedor);
+            comando.Parameters.AddWithValue("@quantidade", venda.Quantidade);
             comando.Parameters.AddWithValue("@total", venda.ValorTotal);
             comando.Parameters.AddWithValue("@formaPagamento", venda.FormaPagamento);
             comando.Parameters.AddWithValue("@id", venda.IdVenda);
