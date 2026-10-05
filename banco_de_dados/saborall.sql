@@ -138,8 +138,11 @@ CREATE TABLE ItensVenda (
 
 -- USUARIOS
 INSERT INTO Usuarios (email, senha) VALUES
-('micaelarthur10@gmail.com', '123456'),
-('felipheeduardo@gmail.com', '12345678');
+('micaelarthur@gmail.com', '12345678'),
+('feliphe.ef@gmail.com', '12345678'),
+('tatielylopes@gmail.com', '12345678'),
+('lcamlaura@gmail.com', '12345678');
+
 
 
 -- VENDEDORES
