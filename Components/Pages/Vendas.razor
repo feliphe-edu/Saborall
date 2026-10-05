@@ -8,6 +8,7 @@
 @inject ProdutoDAO ProdutoDAO
 @inject VendedorDAO VendedorDAO
 @inject EstoqueDAO EstoqueDAO
+@inject NavigationManager Navigation
 
 <PageTitle>Vendas</PageTitle>
 
@@ -89,63 +90,10 @@
 
         </div>
 
-        <!-- LISTA DE VENDAS -->
-        <div class="bloco-tabela">
-
-            <h2>Vendas Realizadas</h2>
-            <br />
-
-            <table class="tabela-simples">
-
-                <thead>
-                    <tr>
-                        <th>Data</th>
-                        <th>Produto</th>
-                        <th>Qtd</th>
-                        <th>Pagamento</th>
-                        <th>Total</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-
-                    @foreach (var v in vendas)
-                    {
-                        var itens = VendaDAO.ListarItens(v.IdVenda);
-                        var primeiroItem = itens.FirstOrDefault();
-
-                        var prod = produtos.FirstOrDefault(
-                            p => p.IdProduto == (primeiroItem?.IdProduto ?? 0)
-                        );
-
-                        <tr>
-                            <td>
-                                @v.DataVenda.ToString("dd/MM/yyyy")
-                            </td>
-
-                            <td>
-                                @(prod?.NomeProduto ?? "Produto")
-                            </td>
-
-                            <td>
-                                @v.Quantidade
-                            </td>
-
-                            <td>
-                                @v.FormaPagamento
-                            </td>
-
-                            <td>
-                                R$ @v.ValorTotal.ToString("F2")
-                            </td>
-                        </tr>
-                    }
-
-                </tbody>
-
-            </table>
-
-        </div>
+        <!-- BOTÃO PARA VENDAS REALIZADAS -->
+        <button @onclick="IrParaVendasRealizadas" class="botao-acao">
+            Ver Vendas Realizadas
+        </button>
 
     </div>
 </div>
@@ -173,6 +121,11 @@
         vendas = VendaDAO.Listar();
         produtos = ProdutoDAO.Listar();
         vendedores = VendedorDAO.Listar();
+    }
+
+    private void IrParaVendasRealizadas()
+    {
+        Navigation.NavigateTo("/VendasRealizadas");
     }
 
     private void RegistrarVenda()

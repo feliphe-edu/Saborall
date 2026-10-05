@@ -1,0 +1,116 @@
+﻿@page "/VendasRealizadas"
+@rendermode InteractiveServer
+
+@using Saborall.DAO
+@using Saborall.Models
+
+@inject VendaDAO VendaDAO
+@inject ProdutoDAO ProdutoDAO
+
+<PageTitle>Vendas Realizadas</PageTitle>
+
+<div class="painel-principal">
+
+    <!-- MENU LATERAL -->
+    <div class="menu-lateral">
+        <img src="/Imagens/logo_.png" class="imagem-logo" />
+
+        <nav class="links-menu">
+            <a href="/Pagina_inicial">Tela Inicial</a>
+            <a href="/Vendas">Nova Venda</a>
+            <a href="/VendasRealizadas" class="link-ativo">Vendas Realizadas</a>
+            <a href="/Estoque">Estoque</a>
+            <a href="/Produtos">Produtos</a>
+            <a href="/Fornecedores">Fornecedores</a>
+        </nav>
+    </div>
+
+    <!-- CONTEÚDO -->
+    <div class="conteudo-pagina">
+
+        <h1>Vendas Realizadas</h1>
+
+        <!-- LISTA DE VENDAS -->
+        <div class="bloco-tabela">
+
+            <h2>Vendas Realizadas</h2>
+            <br />
+
+            <table class="tabela-simples">
+
+                <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>Produto</th>
+                        <th>Qtd</th>
+                        <th>Pagamento</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @foreach (var v in vendas)
+                    {
+                        var itens = VendaDAO.ListarItens(v.IdVenda);
+                        var primeiroItem = itens.FirstOrDefault();
+
+                        var prod = produtos.FirstOrDefault(
+                            p => p.IdProduto == (primeiroItem?.IdProduto ?? 0)
+                        );
+
+                        <tr>
+                            <td>
+                                @v.DataVenda.ToString("dd/MM/yyyy")
+                            </td>
+
+                            <td>
+                                @(prod?.NomeProduto ?? "Produto")
+                            </td>
+
+                            <td>
+                                @v.Quantidade
+                            </td>
+
+                            <td>
+                                @v.FormaPagamento
+                            </td>
+
+                            <td>
+                                R$ @v.ValorTotal.ToString("F2")
+                            </td>
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        <br />
+
+        <a href="/Vendas" class="botao-acao">
+            Voltar para Nova Venda
+        </a>
+
+    </div>
+
+</div>
+
+@code {
+
+    private List<Venda> vendas = new();
+    private List<Produto> produtos = new();
+
+    protected override void OnInitialized()
+    {
+        CarregarTudo();
+    }
+
+    private void CarregarTudo()
+    {
+        vendas = VendaDAO.Listar();
+        produtos = ProdutoDAO.Listar();
+    }
+}

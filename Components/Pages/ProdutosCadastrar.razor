@@ -1,0 +1,311 @@
+﻿@page "/ProdutosCadastrar"
+@rendermode InteractiveServer
+
+@using Saborall.DAO
+@using Saborall.Models
+@using EstoqueModel = Saborall.Models.Estoque
+
+@inject ProdutoDAO ProdutoDAO
+@inject FornecedorDAO FornecedorDAO
+@inject EstoqueDAO EstoqueDAO
+@inject NavigationManager Navigation
+
+<PageTitle>Cadastro de Produto</PageTitle>
+
+<div class="dashboard">
+
+    <!-- MENU LATERAL -->
+    <div class="sidebar">
+
+        <img src="/Imagens/logo_.png"
+             alt="Logo Saborall"
+             class="logo" />
+
+        <nav>
+            <a href="/Pagina_inicial">Tela Inicial</a>
+            <a href="/Vendas">Vendas</a>
+            <a href="/Estoque">Estoque</a>
+            <a href="/Produtos">Produtos</a>
+            <a href="/Fornecedores">Fornecedores</a>
+        </nav>
+
+    </div>
+
+
+    <!-- CONTEÚDO -->
+    <div class="conteudo">
+
+        <div class="pagina-produtos">
+
+            <h1>
+                @(modoEdicao ? "Editar Produto" : "Cadastrar Produto")
+            </h1>
+
+            <br />
+
+
+            <!-- FORMULÁRIO -->
+            <div class="formulario-produto">
+
+                <div class="campos-produto">
+
+                    <input type="text"
+                           placeholder="Nome do produto"
+                           @bind="novoProduto.NomeProduto" />
+
+                    <input type="text"
+                           placeholder="Categoria"
+                           @bind="novoProduto.Categoria" />
+
+                    <input type="number"
+                           step="0.01"
+                           min="0"
+                           placeholder="Preço"
+                           @bind="novoProduto.Preco" />
+
+                    <select @bind="novoProduto.IdFornecedor">
+
+                        <option value="">
+                            Selecione o fornecedor
+                        </option>
+
+                        @foreach (var fornecedor in fornecedores)
+                        {
+                            <option value="@fornecedor.IdFornecedor">
+                                @fornecedor.NomeFantasia
+                            </option>
+                        }
+
+                    </select>
+
+                </div>
+
+
+                <!-- BOTÕES -->
+                @if (modoEdicao)
+                {
+                    <div class="botoes-formulario">
+
+                        <button class="botao-salvar"
+                                @onclick="SalvarEdicao">
+                            Salvar alteração
+                        </button>
+
+                        <button class="botao-cancelar"
+                                @onclick="CancelarEdicao">
+                            Cancelar
+                        </button>
+
+                    </div>
+                }
+                else
+                {
+                    <button class="botao-cadastrar"
+                            @onclick="CadastrarProduto">
+                        Cadastrar produto
+                    </button>
+                }
+
+
+                <!-- MENSAGEM -->
+                @if (!string.IsNullOrWhiteSpace(Mensagem))
+                {
+                    <p class="mensagem">
+                        @Mensagem
+                    </p>
+                }
+
+            </div>
+
+
+            <br />
+
+
+            <!-- VOLTAR -->
+            <button class="botao-cancelar"
+                    @onclick="VoltarProdutos">
+                Voltar para produtos
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+@code {
+
+    // LISTA DE FORNECEDORES
+    private List<Fornecedor> fornecedores = new();
+
+
+    // PRODUTO DO FORMULÁRIO
+    private Produto novoProduto = new();
+
+
+    // CONTROLA SE ESTÁ EDITANDO
+    private bool modoEdicao = false;
+
+
+    // MENSAGEM
+    private string Mensagem = "";
+
+
+    // ID RECEBIDO PELA URL
+    [SupplyParameterFromQuery]
+    private int? id { get; set; }
+
+
+    protected override void OnInitialized()
+    {
+        CarregarDados();
+
+        // SE RECEBEU UM ID, É EDIÇÃO
+        if (id.HasValue)
+        {
+            CarregarProdutoParaEdicao(id.Value);
+        }
+    }
+
+
+    // CARREGAR FORNECEDORES
+    private void CarregarDados()
+    {
+        fornecedores = FornecedorDAO.Listar();
+    }
+
+
+    // CADASTRAR PRODUTO
+    private void CadastrarProduto()
+    {
+        Mensagem = "";
+
+        if (string.IsNullOrWhiteSpace(novoProduto.NomeProduto))
+        {
+            Mensagem = "Digite o nome do produto.";
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(novoProduto.Categoria))
+        {
+            Mensagem = "Digite a categoria do produto.";
+            return;
+        }
+
+        if (novoProduto.Preco <= 0)
+        {
+            Mensagem = "Digite um preço válido.";
+            return;
+        }
+
+        try
+        {
+            int idProduto = ProdutoDAO.Inserir(novoProduto);
+
+            var estoque = new EstoqueModel
+            {
+                IdProduto = idProduto,
+                QuantidadeDisponivel = 0
+            };
+
+            EstoqueDAO.Inserir(estoque);
+
+            Mensagem = "Produto cadastrado com sucesso!";
+
+            novoProduto = new Produto();
+        }
+        catch (Exception ex)
+        {
+            Mensagem = "Erro ao cadastrar produto: " + ex.Message;
+        }
+    }
+
+
+    // CARREGAR PRODUTO PARA EDIÇÃO
+    private void CarregarProdutoParaEdicao(int idProduto)
+    {
+        var produtos = ProdutoDAO.Listar();
+
+        var produto = produtos.FirstOrDefault(
+            p => p.IdProduto == idProduto
+        );
+
+        if (produto == null)
+        {
+            Mensagem = "Produto não encontrado.";
+            return;
+        }
+
+        novoProduto = new Produto
+        {
+            IdProduto = produto.IdProduto,
+            NomeProduto = produto.NomeProduto,
+            Categoria = produto.Categoria,
+            Preco = produto.Preco,
+            IdFornecedor = produto.IdFornecedor
+        };
+
+        modoEdicao = true;
+    }
+
+
+    // SALVAR ALTERAÇÃO
+    private void SalvarEdicao()
+    {
+        Mensagem = "";
+
+        if (string.IsNullOrWhiteSpace(novoProduto.NomeProduto))
+        {
+            Mensagem = "Digite o nome do produto.";
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(novoProduto.Categoria))
+        {
+            Mensagem = "Digite a categoria do produto.";
+            return;
+        }
+
+        if (novoProduto.Preco <= 0)
+        {
+            Mensagem = "Digite um preço válido.";
+            return;
+        }
+
+        try
+        {
+            ProdutoDAO.Atualizar(novoProduto);
+
+            Mensagem = "Produto atualizado com sucesso!";
+
+            modoEdicao = false;
+
+            novoProduto = new Produto();
+        }
+        catch (Exception ex)
+        {
+            Mensagem = "Erro ao atualizar produto: " + ex.Message;
+        }
+    }
+
+
+    // CANCELAR EDIÇÃO
+    private void CancelarEdicao()
+    {
+        novoProduto = new Produto();
+
+        modoEdicao = false;
+
+        Mensagem = "";
+
+        Navigation.NavigateTo("/Produtos");
+    }
+
+
+    // VOLTAR
+    private void VoltarProdutos()
+    {
+        Navigation.NavigateTo("/Produtos");
+    }
+}

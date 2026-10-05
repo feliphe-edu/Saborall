@@ -5,7 +5,7 @@
         public int IdVenda { get; set; }
 
         public DateTime DataVenda { get; set; }
-
+          
         public int IdVendedor { get; set; }
 
         public int Quantidade { get; set; }
